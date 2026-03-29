@@ -8,12 +8,12 @@ describe('tjmk-hospital-wl-list', () => {
       components: [TjmkHospitalWlList],
       html: `<tjmk-hospital-wl-list></tjmk-hospital-wl-list>`,
     });
-    expect(page.root).toEqualHtml(`
-      <tjmk-hospital-wl-list>
-        <mock:shadow-root>
-          <slot></slot>
-        </mock:shadow-root>
-      </tjmk-hospital-wl-list>
-    `);
+   
+    const wlList = page.rootInstance as TjmkHospitalWlList;
+    const expectedPatients = wlList?.waitingPatients?.length
+
+    const items = page.root.shadowRoot.querySelectorAll("md-list-item");
+    expect(items.length).toEqual(expectedPatients);
+
   });
 });
