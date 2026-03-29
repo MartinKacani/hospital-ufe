@@ -45,5 +45,8 @@
     "@vitest/browser-playwright": "^4.0.0",
     "vitest": "^4.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@material/web": "^2.4.1"
+  }
 }

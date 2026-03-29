@@ -24,3 +24,9 @@ $RECYCLE.BIN/
 Thumbs.db
 UserInterfaceState.xcuserstate
 .env
+
+dist/
+www/
+loader/
+
+node_modules/
