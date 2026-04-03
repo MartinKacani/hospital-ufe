@@ -1,0 +1,46 @@
+openapi: 3.0.0
+servers:
+  - description: Cluster Endpoint
+    url: /api
+info:
+  description: Hospital Waiting List management for Web-In-Cloud system
+  version: "1.0.0"
+  title: Waiting List Api
+  contact:
+    email: xkacani@stuba.sk
+  license:
+    name: CC BY 4.0
+    url: "https://creativecommons.org/licenses/by/4.0/"
+tags:
+- name: hospitalWaitingList
+  description: Hospital Waiting List API
+
+paths:
+  "/waiting-list/{hospitalId}/entries":
+    get:
+      tags:
+        - hospitalWaitingList
+      summary: Provides the hospital waiting list
+      operationId: getWaitingListEntries
+      description: By using hospitalId you get list of entries in hospital waiting list
+      parameters:
+        - in: path
+          name: hospitalId
+          description: pass the id of the particular hospital
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the waiting list entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WaitingListEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/WaitingListEntriesExample"
+        "404":
+          description: Hospital with such ID does not exist

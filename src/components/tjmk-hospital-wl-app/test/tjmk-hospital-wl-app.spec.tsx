@@ -18,9 +18,9 @@ describe('tjmk-hospital-wl-app', () => {
 
   it('renders list', async () => {
     const page = await newSpecPage({
-      url: `http://localhost/ambulance-wl/`,
+      url: `http://localhost/hospital-wl/`,
       components: [TjmkHospitalWlApp],
-      html: `<tjmk-hospital-wl-app base-path="/ambulance-wl/"></tjmk-hospital-wl-app>`,
+      html: `<tjmk-hospital-wl-app base-path="/hospital-wl/"></tjmk-hospital-wl-app>`,
     });
     page.win.navigation = new EventTarget()
     const child = await page.root.shadowRoot.firstElementChild;
