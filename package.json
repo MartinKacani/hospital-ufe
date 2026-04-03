@@ -32,17 +32,27 @@
     "loader/"
   ],
   "scripts": {
+    "convert-openapi": "js-yaml  ./api/hospital-wl.openapi.yaml > .openapi.json",
+    "mock-api": "open-api-mocker --schema .openapi.json --port 5000",
+    "start:app": "stencil build --dev --watch --serve",
+    "start:mock": "run-s convert-openapi mock-api",
+    "start": "run-p -r start:mock start:app",
     "build": "stencil build",
-    "start": "stencil build --dev --watch --serve",
     "test": "stencil-test",
     "test:watch": "stencil-test --watch",
-    "generate": "stencil generate"
+    "generate": "stencil generate",
+    "openapi": "openapi-generator-cli generate"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.31.0",
     "@stencil/core": "^4.27.1",
     "@stencil/vitest": "^1.8.3",
     "@types/node": "^22.13.5",
     "@vitest/browser-playwright": "^4.0.0",
+    "jest-fetch-mock": "^3.0.3",
+    "js-yaml": "^4.1.1",
+    "npm-run-all": "^4.1.5",
+    "open-api-mocker": "^2.0.0",
     "vitest": "^4.0.0"
   },
   "license": "MIT",

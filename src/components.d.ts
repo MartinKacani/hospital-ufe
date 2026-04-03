@@ -7,15 +7,19 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface TjmkHospitalWlApp {
+        "apiBase": string;
         /**
           * @default ""
          */
         "basePath": string;
+        "hospitalId": string;
     }
     interface TjmkHospitalWlEditor {
         "entryId": string;
     }
     interface TjmkHospitalWlList {
+        "apiBase": string;
+        "hospitalId": string;
     }
 }
 export interface TjmkHospitalWlEditorCustomEvent<T> extends CustomEvent<T> {
@@ -75,30 +79,40 @@ declare global {
 }
 declare namespace LocalJSX {
     interface TjmkHospitalWlApp {
+        "apiBase"?: string;
         /**
           * @default ""
          */
         "basePath"?: string;
+        "hospitalId"?: string;
     }
     interface TjmkHospitalWlEditor {
         "entryId"?: string;
         "onEditor-closed"?: (event: TjmkHospitalWlEditorCustomEvent<string>) => void;
     }
     interface TjmkHospitalWlList {
+        "apiBase"?: string;
+        "hospitalId"?: string;
         "onEntry-clicked"?: (event: TjmkHospitalWlListCustomEvent<string>) => void;
     }
 
     interface TjmkHospitalWlAppAttributes {
         "basePath": string;
+        "apiBase": string;
+        "hospitalId": string;
     }
     interface TjmkHospitalWlEditorAttributes {
         "entryId": string;
+    }
+    interface TjmkHospitalWlListAttributes {
+        "apiBase": string;
+        "hospitalId": string;
     }
 
     interface IntrinsicElements {
         "tjmk-hospital-wl-app": Omit<TjmkHospitalWlApp, keyof TjmkHospitalWlAppAttributes> & { [K in keyof TjmkHospitalWlApp & keyof TjmkHospitalWlAppAttributes]?: TjmkHospitalWlApp[K] } & { [K in keyof TjmkHospitalWlApp & keyof TjmkHospitalWlAppAttributes as `attr:${K}`]?: TjmkHospitalWlAppAttributes[K] } & { [K in keyof TjmkHospitalWlApp & keyof TjmkHospitalWlAppAttributes as `prop:${K}`]?: TjmkHospitalWlApp[K] };
         "tjmk-hospital-wl-editor": Omit<TjmkHospitalWlEditor, keyof TjmkHospitalWlEditorAttributes> & { [K in keyof TjmkHospitalWlEditor & keyof TjmkHospitalWlEditorAttributes]?: TjmkHospitalWlEditor[K] } & { [K in keyof TjmkHospitalWlEditor & keyof TjmkHospitalWlEditorAttributes as `attr:${K}`]?: TjmkHospitalWlEditorAttributes[K] } & { [K in keyof TjmkHospitalWlEditor & keyof TjmkHospitalWlEditorAttributes as `prop:${K}`]?: TjmkHospitalWlEditor[K] };
-        "tjmk-hospital-wl-list": TjmkHospitalWlList;
+        "tjmk-hospital-wl-list": Omit<TjmkHospitalWlList, keyof TjmkHospitalWlListAttributes> & { [K in keyof TjmkHospitalWlList & keyof TjmkHospitalWlListAttributes]?: TjmkHospitalWlList[K] } & { [K in keyof TjmkHospitalWlList & keyof TjmkHospitalWlListAttributes as `attr:${K}`]?: TjmkHospitalWlListAttributes[K] } & { [K in keyof TjmkHospitalWlList & keyof TjmkHospitalWlListAttributes as `prop:${K}`]?: TjmkHospitalWlList[K] };
     }
 }
 export { LocalJSX as JSX };
