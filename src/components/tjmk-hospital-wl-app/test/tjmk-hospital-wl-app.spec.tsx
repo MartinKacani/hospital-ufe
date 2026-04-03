@@ -10,10 +10,9 @@ describe('tjmk-hospital-wl-app', () => {
       components: [TjmkHospitalWlApp],
       html: `<tjmk-hospital-wl-app base-path="/"></tjmk-hospital-wl-app>`,
     });
-    page.win.navigation = new EventTarget()
-    const child = await page.root.shadowRoot.firstElementChild;
-    expect(child.tagName.toLocaleLowerCase()).toEqual ("tjmk-hospital-wl-editor");
-
+    (page.win as any).navigation = new EventTarget();
+    const child = page.root?.shadowRoot?.firstElementChild;
+    expect(child?.tagName.toLowerCase()).toEqual("tjmk-hospital-wl-editor");
   });
 
   it('renders list', async () => {
@@ -22,8 +21,8 @@ describe('tjmk-hospital-wl-app', () => {
       components: [TjmkHospitalWlApp],
       html: `<tjmk-hospital-wl-app base-path="/hospital-wl/"></tjmk-hospital-wl-app>`,
     });
-    page.win.navigation = new EventTarget()
-    const child = await page.root.shadowRoot.firstElementChild;
-    expect(child.tagName.toLocaleLowerCase()).toEqual("tjmk-hospital-wl-list");
+    (page.win as any).navigation = new EventTarget();
+    const child = page.root?.shadowRoot?.firstElementChild;
+    expect(child?.tagName.toLowerCase()).toEqual("tjmk-hospital-wl-list");
   });
 });
