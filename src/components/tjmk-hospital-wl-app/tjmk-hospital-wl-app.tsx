@@ -1,9 +1,5 @@
 import { Component, Host, Prop, State, h } from '@stencil/core';
 
-declare global {
-  interface Window { navigation: any; }
-}
-
 @Component({
   tag: 'tjmk-hospital-wl-app',
   styleUrl: 'tjmk-hospital-wl-app.css',

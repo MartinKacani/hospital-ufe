@@ -6,8 +6,8 @@ import { Component, Event, EventEmitter,  Host, h } from '@stencil/core';
   shadow: true,
 })
 export class TjmkHospitalWlList {
-  @Event({ eventName: "entry-clicked"}) entryClicked: EventEmitter<string>;
-  waitingPatients: any[];
+  @Event({ eventName: "entry-clicked"}) entryClicked!: EventEmitter<string>;
+  waitingPatients: any[] = [];
 
   private async getWaitingPatientsAsync(){
     return await Promise.resolve(
