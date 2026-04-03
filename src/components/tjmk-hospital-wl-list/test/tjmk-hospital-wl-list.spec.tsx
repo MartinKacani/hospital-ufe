@@ -52,7 +52,30 @@ describe('tjmk-hospital-wl-list', () => {
     // Assert that the expected number of patients and rendered items match the sample entries
     expect(expectedPatients).toEqual(sampleEntries.length);
     expect(items.length).toEqual(expectedPatients);
+  });
 
+  it('renders error message on network issues', async () => {
+    // Mock the network error
+    fetchMock.mockRejectOnce(new Error('Network Error'));
 
+    const page = await newSpecPage({
+      components: [TjmkHospitalWlList],
+      html: `<tjmk-hospital-wl-list hospital-id="test-hospital" api-base="http://test/api"></tjmk-hospital-wl-list>`,
+    });
+
+    const wlList = page.rootInstance as TjmkHospitalWlList;
+    const expectedPatients = wlList?.waitingPatients?.length;
+
+    // Wait for the DOM to update
+    await page.waitForChanges();
+
+    // Query the DOM for error message and list items
+    const errorMessage = page.root.shadowRoot.querySelectorAll(".error");
+    const items = page.root.shadowRoot.querySelectorAll("md-list-item");
+
+    // Assert that the error message is displayed and no patients are listed
+    expect(errorMessage.length).toBeGreaterThanOrEqual(1);
+    expect(expectedPatients).toEqual(0);
+    expect(items.length).toEqual(expectedPatients);
   });
 });
