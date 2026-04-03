@@ -6,24 +6,98 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
+    interface TjmkHospitalWlApp {
+        /**
+          * @default ""
+         */
+        "basePath": string;
+    }
+    interface TjmkHospitalWlEditor {
+        "entryId": string;
+    }
     interface TjmkHospitalWlList {
     }
 }
+export interface TjmkHospitalWlEditorCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLTjmkHospitalWlEditorElement;
+}
+export interface TjmkHospitalWlListCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLTjmkHospitalWlListElement;
+}
 declare global {
+    interface HTMLTjmkHospitalWlAppElement extends Components.TjmkHospitalWlApp, HTMLStencilElement {
+    }
+    var HTMLTjmkHospitalWlAppElement: {
+        prototype: HTMLTjmkHospitalWlAppElement;
+        new (): HTMLTjmkHospitalWlAppElement;
+    };
+    interface HTMLTjmkHospitalWlEditorElementEventMap {
+        "editor-closed": string;
+    }
+    interface HTMLTjmkHospitalWlEditorElement extends Components.TjmkHospitalWlEditor, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLTjmkHospitalWlEditorElementEventMap>(type: K, listener: (this: HTMLTjmkHospitalWlEditorElement, ev: TjmkHospitalWlEditorCustomEvent<HTMLTjmkHospitalWlEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLTjmkHospitalWlEditorElementEventMap>(type: K, listener: (this: HTMLTjmkHospitalWlEditorElement, ev: TjmkHospitalWlEditorCustomEvent<HTMLTjmkHospitalWlEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLTjmkHospitalWlEditorElement: {
+        prototype: HTMLTjmkHospitalWlEditorElement;
+        new (): HTMLTjmkHospitalWlEditorElement;
+    };
+    interface HTMLTjmkHospitalWlListElementEventMap {
+        "entry-clicked": string;
+    }
     interface HTMLTjmkHospitalWlListElement extends Components.TjmkHospitalWlList, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLTjmkHospitalWlListElementEventMap>(type: K, listener: (this: HTMLTjmkHospitalWlListElement, ev: TjmkHospitalWlListCustomEvent<HTMLTjmkHospitalWlListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLTjmkHospitalWlListElementEventMap>(type: K, listener: (this: HTMLTjmkHospitalWlListElement, ev: TjmkHospitalWlListCustomEvent<HTMLTjmkHospitalWlListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLTjmkHospitalWlListElement: {
         prototype: HTMLTjmkHospitalWlListElement;
         new (): HTMLTjmkHospitalWlListElement;
     };
     interface HTMLElementTagNameMap {
+        "tjmk-hospital-wl-app": HTMLTjmkHospitalWlAppElement;
+        "tjmk-hospital-wl-editor": HTMLTjmkHospitalWlEditorElement;
         "tjmk-hospital-wl-list": HTMLTjmkHospitalWlListElement;
     }
 }
 declare namespace LocalJSX {
-    interface TjmkHospitalWlList {
+    interface TjmkHospitalWlApp {
+        /**
+          * @default ""
+         */
+        "basePath"?: string;
     }
+    interface TjmkHospitalWlEditor {
+        "entryId"?: string;
+        "onEditor-closed"?: (event: TjmkHospitalWlEditorCustomEvent<string>) => void;
+    }
+    interface TjmkHospitalWlList {
+        "onEntry-clicked"?: (event: TjmkHospitalWlListCustomEvent<string>) => void;
+    }
+
+    interface TjmkHospitalWlAppAttributes {
+        "basePath": string;
+    }
+    interface TjmkHospitalWlEditorAttributes {
+        "entryId": string;
+    }
+
     interface IntrinsicElements {
+        "tjmk-hospital-wl-app": Omit<TjmkHospitalWlApp, keyof TjmkHospitalWlAppAttributes> & { [K in keyof TjmkHospitalWlApp & keyof TjmkHospitalWlAppAttributes]?: TjmkHospitalWlApp[K] } & { [K in keyof TjmkHospitalWlApp & keyof TjmkHospitalWlAppAttributes as `attr:${K}`]?: TjmkHospitalWlAppAttributes[K] } & { [K in keyof TjmkHospitalWlApp & keyof TjmkHospitalWlAppAttributes as `prop:${K}`]?: TjmkHospitalWlApp[K] };
+        "tjmk-hospital-wl-editor": Omit<TjmkHospitalWlEditor, keyof TjmkHospitalWlEditorAttributes> & { [K in keyof TjmkHospitalWlEditor & keyof TjmkHospitalWlEditorAttributes]?: TjmkHospitalWlEditor[K] } & { [K in keyof TjmkHospitalWlEditor & keyof TjmkHospitalWlEditorAttributes as `attr:${K}`]?: TjmkHospitalWlEditorAttributes[K] } & { [K in keyof TjmkHospitalWlEditor & keyof TjmkHospitalWlEditorAttributes as `prop:${K}`]?: TjmkHospitalWlEditor[K] };
         "tjmk-hospital-wl-list": TjmkHospitalWlList;
     }
 }
@@ -31,6 +105,8 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "tjmk-hospital-wl-app": LocalJSX.IntrinsicElements["tjmk-hospital-wl-app"] & JSXBase.HTMLAttributes<HTMLTjmkHospitalWlAppElement>;
+            "tjmk-hospital-wl-editor": LocalJSX.IntrinsicElements["tjmk-hospital-wl-editor"] & JSXBase.HTMLAttributes<HTMLTjmkHospitalWlEditorElement>;
             "tjmk-hospital-wl-list": LocalJSX.IntrinsicElements["tjmk-hospital-wl-list"] & JSXBase.HTMLAttributes<HTMLTjmkHospitalWlListElement>;
         }
     }

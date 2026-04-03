@@ -1,0 +1,29 @@
+import { newSpecPage } from '@stencil/core/testing';
+import { TjmkHospitalWlApp } from '../tjmk-hospital-wl-app';
+import { describe, it, expect } from 'vitest';
+
+describe('tjmk-hospital-wl-app', () => {
+
+  it('renders editor', async () => {
+    const page = await newSpecPage({
+      url: `http://localhost/entry/@new`,
+      components: [TjmkHospitalWlApp],
+      html: `<tjmk-hospital-wl-app base-path="/"></tjmk-hospital-wl-app>`,
+    });
+    page.win.navigation = new EventTarget()
+    const child = await page.root.shadowRoot.firstElementChild;
+    expect(child.tagName.toLocaleLowerCase()).toEqual ("tjmk-hospital-wl-editor");
+
+  });
+
+  it('renders list', async () => {
+    const page = await newSpecPage({
+      url: `http://localhost/ambulance-wl/`,
+      components: [TjmkHospitalWlApp],
+      html: `<tjmk-hospital-wl-app base-path="/ambulance-wl/"></tjmk-hospital-wl-app>`,
+    });
+    page.win.navigation = new EventTarget()
+    const child = await page.root.shadowRoot.firstElementChild;
+    expect(child.tagName.toLocaleLowerCase()).toEqual("tjmk-hospital-wl-list");
+  });
+});
