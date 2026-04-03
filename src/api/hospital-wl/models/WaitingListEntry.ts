@@ -12,11 +12,10 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { exists } from '../runtime';
 import type { Condition } from './Condition';
 import {
     ConditionFromJSON,
-    ConditionFromJSONTyped,
     ConditionToJSON,
 } from './Condition';
 
@@ -84,10 +83,10 @@ export function instanceOfWaitingListEntry(value: object): boolean {
 }
 
 export function WaitingListEntryFromJSON(json: any): WaitingListEntry {
-    return WaitingListEntryFromJSONTyped(json, false);
+    return WaitingListEntryFromJSONTyped(json);
 }
 
-export function WaitingListEntryFromJSONTyped(json: any, ignoreDiscriminator: boolean): WaitingListEntry {
+export function WaitingListEntryFromJSONTyped(json: any): WaitingListEntry {
     if ((json === undefined) || (json === null)) {
         return json;
     }

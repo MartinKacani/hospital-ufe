@@ -19,7 +19,6 @@ import type {
 } from '../models';
 import {
     WaitingListEntryFromJSON,
-    WaitingListEntryToJSON,
 } from '../models';
 
 export interface GetWaitingListEntriesRequest {

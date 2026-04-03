@@ -22,14 +22,6 @@ describe('tjmk-hospital-wl-list', () => {
     }
   ];
 
-  beforeAll(() => {
-    fetchMock.enableMocks();
-  });
-
-  afterEach(() => {
-    fetchMock.resetMocks();
-  });
-
   it('renders sample entries', async () => {
     // Mock the API response using sampleEntries
     fetchMock.mockResponseOnce(JSON.stringify(sampleEntries));
