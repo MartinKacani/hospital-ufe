@@ -2,6 +2,7 @@ import { newSpecPage } from '@stencil/core/testing';
 import { TjmkHospitalWlEditor } from '../tjmk-hospital-wl-editor';
 import fetchMock from 'jest-fetch-mock';
 import { Condition, WaitingListEntry } from '../../../api/hospital-wl';
+import { describe, beforeAll, afterEach, it, expect } from 'vitest';
 
 describe('tjmk-hospital-wl-editor', () => {
   const sampleEntry: WaitingListEntry = {
