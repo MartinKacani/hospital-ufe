@@ -83,7 +83,7 @@ export function instanceOfWaitingListEntry(value: object): boolean {
 }
 
 export function WaitingListEntryFromJSON(json: any): WaitingListEntry {
-    return WaitingListEntryFromJSONTyped(json, false);
+    return WaitingListEntryFromJSONTyped(json);
 }
 
 export function WaitingListEntryFromJSONTyped(json: any): WaitingListEntry {

@@ -56,7 +56,7 @@ export function instanceOfCondition(value: object): boolean {
 }
 
 export function ConditionFromJSON(json: any): Condition {
-    return ConditionFromJSONTyped(json, false);
+    return ConditionFromJSONTyped(json);
 }
 
 export function ConditionFromJSONTyped(json: any): Condition {
