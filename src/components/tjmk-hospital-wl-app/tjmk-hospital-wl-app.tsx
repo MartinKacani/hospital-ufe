@@ -33,6 +33,8 @@ export class TjmkHospitalWlApp {
   }
 
   render() {
+    console.debug("tjmk-hospital-wl-app.render() - path: %s", this.relativePath);
+
     let element = "list"
     let entryId = "@new"
 
