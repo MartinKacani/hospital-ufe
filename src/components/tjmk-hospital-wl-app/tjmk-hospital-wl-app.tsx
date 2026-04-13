@@ -51,6 +51,7 @@ export class TjmkHospitalWlApp {
       <Host>
         { element === "editor"
         ? <tjmk-hospital-wl-editor entry-id={entryId}
+          hospital-id={this.hospitalId} api-base={this.apiBase}
           oneditor-closed={ () => navigate("./list")}
         ></tjmk-hospital-wl-editor>
         : <tjmk-hospital-wl-list  hospital-id={this.hospitalId} api-base={this.apiBase}

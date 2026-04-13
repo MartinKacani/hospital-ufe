@@ -1,3 +1,4 @@
+import '@material/web/iconbutton/filled-icon-button'
 import '@material/web/list/list'
 import '@material/web/list/list-item'
 import '@material/web/icon/icon'

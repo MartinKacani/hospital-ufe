@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists } from '../runtime';
+import { exists, mapValues } from '../runtime';
 /**
  * Describes disease, symptoms, or other reasons of patient   visit
  * @export
@@ -56,10 +56,10 @@ export function instanceOfCondition(value: object): boolean {
 }
 
 export function ConditionFromJSON(json: any): Condition {
-    return ConditionFromJSONTyped(json);
+    return ConditionFromJSONTyped(json, false);
 }
 
-export function ConditionFromJSONTyped(json: any): Condition {
+export function ConditionFromJSONTyped(json: any, ignoreDiscriminator: boolean): Condition {
     if ((json === undefined) || (json === null)) {
         return json;
     }

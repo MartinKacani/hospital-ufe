@@ -15,7 +15,9 @@ export namespace Components {
         "hospitalId": string;
     }
     interface TjmkHospitalWlEditor {
+        "apiBase": string;
         "entryId": string;
+        "hospitalId": string;
     }
     interface TjmkHospitalWlList {
         "apiBase": string;
@@ -87,7 +89,9 @@ declare namespace LocalJSX {
         "hospitalId"?: string;
     }
     interface TjmkHospitalWlEditor {
+        "apiBase"?: string;
         "entryId"?: string;
+        "hospitalId"?: string;
         "onEditor-closed"?: (event: TjmkHospitalWlEditorCustomEvent<string>) => void;
     }
     interface TjmkHospitalWlList {
@@ -103,6 +107,8 @@ declare namespace LocalJSX {
     }
     interface TjmkHospitalWlEditorAttributes {
         "entryId": string;
+        "hospitalId": string;
+        "apiBase": string;
     }
     interface TjmkHospitalWlListAttributes {
         "apiBase": string;
