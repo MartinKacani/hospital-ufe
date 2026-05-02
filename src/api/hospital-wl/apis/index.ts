@@ -1,4 +1,4 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './HospitalConditionsApi';
-export * from './HospitalWaitingListApi';
+export * from './ReservationsApi';
+export * from './StaysApi';

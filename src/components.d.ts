@@ -6,128 +6,205 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
-    interface TjmkHospitalWlApp {
+    interface TjmkMedbedApp {
         "apiBase": string;
         /**
-          * @default ""
+          * @default ''
          */
         "basePath": string;
-        "hospitalId": string;
+        "departmentId": string;
     }
-    interface TjmkHospitalWlEditor {
+    interface TjmkMedbedReservationEditor {
         "apiBase": string;
-        "entryId": string;
-        "hospitalId": string;
+        "departmentId": string;
+        "reservationId": string;
     }
-    interface TjmkHospitalWlList {
+    interface TjmkMedbedReservationList {
         "apiBase": string;
-        "hospitalId": string;
+        "departmentId": string;
+    }
+    interface TjmkMedbedStayEditor {
+        "apiBase": string;
+        "departmentId": string;
+        "stayId": string;
+    }
+    interface TjmkMedbedStayList {
+        "apiBase": string;
+        "departmentId": string;
     }
 }
-export interface TjmkHospitalWlEditorCustomEvent<T> extends CustomEvent<T> {
+export interface TjmkMedbedReservationEditorCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLTjmkHospitalWlEditorElement;
+    target: HTMLTjmkMedbedReservationEditorElement;
 }
-export interface TjmkHospitalWlListCustomEvent<T> extends CustomEvent<T> {
+export interface TjmkMedbedReservationListCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLTjmkHospitalWlListElement;
+    target: HTMLTjmkMedbedReservationListElement;
+}
+export interface TjmkMedbedStayEditorCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLTjmkMedbedStayEditorElement;
+}
+export interface TjmkMedbedStayListCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLTjmkMedbedStayListElement;
 }
 declare global {
-    interface HTMLTjmkHospitalWlAppElement extends Components.TjmkHospitalWlApp, HTMLStencilElement {
+    interface HTMLTjmkMedbedAppElement extends Components.TjmkMedbedApp, HTMLStencilElement {
     }
-    var HTMLTjmkHospitalWlAppElement: {
-        prototype: HTMLTjmkHospitalWlAppElement;
-        new (): HTMLTjmkHospitalWlAppElement;
+    var HTMLTjmkMedbedAppElement: {
+        prototype: HTMLTjmkMedbedAppElement;
+        new (): HTMLTjmkMedbedAppElement;
     };
-    interface HTMLTjmkHospitalWlEditorElementEventMap {
+    interface HTMLTjmkMedbedReservationEditorElementEventMap {
         "editor-closed": string;
     }
-    interface HTMLTjmkHospitalWlEditorElement extends Components.TjmkHospitalWlEditor, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLTjmkHospitalWlEditorElementEventMap>(type: K, listener: (this: HTMLTjmkHospitalWlEditorElement, ev: TjmkHospitalWlEditorCustomEvent<HTMLTjmkHospitalWlEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    interface HTMLTjmkMedbedReservationEditorElement extends Components.TjmkMedbedReservationEditor, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLTjmkMedbedReservationEditorElementEventMap>(type: K, listener: (this: HTMLTjmkMedbedReservationEditorElement, ev: TjmkMedbedReservationEditorCustomEvent<HTMLTjmkMedbedReservationEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLTjmkHospitalWlEditorElementEventMap>(type: K, listener: (this: HTMLTjmkHospitalWlEditorElement, ev: TjmkHospitalWlEditorCustomEvent<HTMLTjmkHospitalWlEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLTjmkMedbedReservationEditorElementEventMap>(type: K, listener: (this: HTMLTjmkMedbedReservationEditorElement, ev: TjmkMedbedReservationEditorCustomEvent<HTMLTjmkMedbedReservationEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLTjmkHospitalWlEditorElement: {
-        prototype: HTMLTjmkHospitalWlEditorElement;
-        new (): HTMLTjmkHospitalWlEditorElement;
+    var HTMLTjmkMedbedReservationEditorElement: {
+        prototype: HTMLTjmkMedbedReservationEditorElement;
+        new (): HTMLTjmkMedbedReservationEditorElement;
     };
-    interface HTMLTjmkHospitalWlListElementEventMap {
+    interface HTMLTjmkMedbedReservationListElementEventMap {
         "entry-clicked": string;
     }
-    interface HTMLTjmkHospitalWlListElement extends Components.TjmkHospitalWlList, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLTjmkHospitalWlListElementEventMap>(type: K, listener: (this: HTMLTjmkHospitalWlListElement, ev: TjmkHospitalWlListCustomEvent<HTMLTjmkHospitalWlListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    interface HTMLTjmkMedbedReservationListElement extends Components.TjmkMedbedReservationList, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLTjmkMedbedReservationListElementEventMap>(type: K, listener: (this: HTMLTjmkMedbedReservationListElement, ev: TjmkMedbedReservationListCustomEvent<HTMLTjmkMedbedReservationListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLTjmkHospitalWlListElementEventMap>(type: K, listener: (this: HTMLTjmkHospitalWlListElement, ev: TjmkHospitalWlListCustomEvent<HTMLTjmkHospitalWlListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLTjmkMedbedReservationListElementEventMap>(type: K, listener: (this: HTMLTjmkMedbedReservationListElement, ev: TjmkMedbedReservationListCustomEvent<HTMLTjmkMedbedReservationListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLTjmkHospitalWlListElement: {
-        prototype: HTMLTjmkHospitalWlListElement;
-        new (): HTMLTjmkHospitalWlListElement;
+    var HTMLTjmkMedbedReservationListElement: {
+        prototype: HTMLTjmkMedbedReservationListElement;
+        new (): HTMLTjmkMedbedReservationListElement;
+    };
+    interface HTMLTjmkMedbedStayEditorElementEventMap {
+        "editor-closed": string;
+    }
+    interface HTMLTjmkMedbedStayEditorElement extends Components.TjmkMedbedStayEditor, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLTjmkMedbedStayEditorElementEventMap>(type: K, listener: (this: HTMLTjmkMedbedStayEditorElement, ev: TjmkMedbedStayEditorCustomEvent<HTMLTjmkMedbedStayEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLTjmkMedbedStayEditorElementEventMap>(type: K, listener: (this: HTMLTjmkMedbedStayEditorElement, ev: TjmkMedbedStayEditorCustomEvent<HTMLTjmkMedbedStayEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLTjmkMedbedStayEditorElement: {
+        prototype: HTMLTjmkMedbedStayEditorElement;
+        new (): HTMLTjmkMedbedStayEditorElement;
+    };
+    interface HTMLTjmkMedbedStayListElementEventMap {
+        "entry-clicked": string;
+    }
+    interface HTMLTjmkMedbedStayListElement extends Components.TjmkMedbedStayList, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLTjmkMedbedStayListElementEventMap>(type: K, listener: (this: HTMLTjmkMedbedStayListElement, ev: TjmkMedbedStayListCustomEvent<HTMLTjmkMedbedStayListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLTjmkMedbedStayListElementEventMap>(type: K, listener: (this: HTMLTjmkMedbedStayListElement, ev: TjmkMedbedStayListCustomEvent<HTMLTjmkMedbedStayListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLTjmkMedbedStayListElement: {
+        prototype: HTMLTjmkMedbedStayListElement;
+        new (): HTMLTjmkMedbedStayListElement;
     };
     interface HTMLElementTagNameMap {
-        "tjmk-hospital-wl-app": HTMLTjmkHospitalWlAppElement;
-        "tjmk-hospital-wl-editor": HTMLTjmkHospitalWlEditorElement;
-        "tjmk-hospital-wl-list": HTMLTjmkHospitalWlListElement;
+        "tjmk-medbed-app": HTMLTjmkMedbedAppElement;
+        "tjmk-medbed-reservation-editor": HTMLTjmkMedbedReservationEditorElement;
+        "tjmk-medbed-reservation-list": HTMLTjmkMedbedReservationListElement;
+        "tjmk-medbed-stay-editor": HTMLTjmkMedbedStayEditorElement;
+        "tjmk-medbed-stay-list": HTMLTjmkMedbedStayListElement;
     }
 }
 declare namespace LocalJSX {
-    interface TjmkHospitalWlApp {
+    interface TjmkMedbedApp {
         "apiBase"?: string;
         /**
-          * @default ""
+          * @default ''
          */
         "basePath"?: string;
-        "hospitalId"?: string;
+        "departmentId"?: string;
     }
-    interface TjmkHospitalWlEditor {
+    interface TjmkMedbedReservationEditor {
         "apiBase"?: string;
-        "entryId"?: string;
-        "hospitalId"?: string;
-        "onEditor-closed"?: (event: TjmkHospitalWlEditorCustomEvent<string>) => void;
+        "departmentId"?: string;
+        "onEditor-closed"?: (event: TjmkMedbedReservationEditorCustomEvent<string>) => void;
+        "reservationId"?: string;
     }
-    interface TjmkHospitalWlList {
+    interface TjmkMedbedReservationList {
         "apiBase"?: string;
-        "hospitalId"?: string;
-        "onEntry-clicked"?: (event: TjmkHospitalWlListCustomEvent<string>) => void;
+        "departmentId"?: string;
+        "onEntry-clicked"?: (event: TjmkMedbedReservationListCustomEvent<string>) => void;
+    }
+    interface TjmkMedbedStayEditor {
+        "apiBase"?: string;
+        "departmentId"?: string;
+        "onEditor-closed"?: (event: TjmkMedbedStayEditorCustomEvent<string>) => void;
+        "stayId"?: string;
+    }
+    interface TjmkMedbedStayList {
+        "apiBase"?: string;
+        "departmentId"?: string;
+        "onEntry-clicked"?: (event: TjmkMedbedStayListCustomEvent<string>) => void;
     }
 
-    interface TjmkHospitalWlAppAttributes {
+    interface TjmkMedbedAppAttributes {
         "basePath": string;
         "apiBase": string;
-        "hospitalId": string;
+        "departmentId": string;
     }
-    interface TjmkHospitalWlEditorAttributes {
-        "entryId": string;
-        "hospitalId": string;
+    interface TjmkMedbedReservationEditorAttributes {
+        "reservationId": string;
+        "departmentId": string;
         "apiBase": string;
     }
-    interface TjmkHospitalWlListAttributes {
+    interface TjmkMedbedReservationListAttributes {
         "apiBase": string;
-        "hospitalId": string;
+        "departmentId": string;
+    }
+    interface TjmkMedbedStayEditorAttributes {
+        "stayId": string;
+        "departmentId": string;
+        "apiBase": string;
+    }
+    interface TjmkMedbedStayListAttributes {
+        "apiBase": string;
+        "departmentId": string;
     }
 
     interface IntrinsicElements {
-        "tjmk-hospital-wl-app": Omit<TjmkHospitalWlApp, keyof TjmkHospitalWlAppAttributes> & { [K in keyof TjmkHospitalWlApp & keyof TjmkHospitalWlAppAttributes]?: TjmkHospitalWlApp[K] } & { [K in keyof TjmkHospitalWlApp & keyof TjmkHospitalWlAppAttributes as `attr:${K}`]?: TjmkHospitalWlAppAttributes[K] } & { [K in keyof TjmkHospitalWlApp & keyof TjmkHospitalWlAppAttributes as `prop:${K}`]?: TjmkHospitalWlApp[K] };
-        "tjmk-hospital-wl-editor": Omit<TjmkHospitalWlEditor, keyof TjmkHospitalWlEditorAttributes> & { [K in keyof TjmkHospitalWlEditor & keyof TjmkHospitalWlEditorAttributes]?: TjmkHospitalWlEditor[K] } & { [K in keyof TjmkHospitalWlEditor & keyof TjmkHospitalWlEditorAttributes as `attr:${K}`]?: TjmkHospitalWlEditorAttributes[K] } & { [K in keyof TjmkHospitalWlEditor & keyof TjmkHospitalWlEditorAttributes as `prop:${K}`]?: TjmkHospitalWlEditor[K] };
-        "tjmk-hospital-wl-list": Omit<TjmkHospitalWlList, keyof TjmkHospitalWlListAttributes> & { [K in keyof TjmkHospitalWlList & keyof TjmkHospitalWlListAttributes]?: TjmkHospitalWlList[K] } & { [K in keyof TjmkHospitalWlList & keyof TjmkHospitalWlListAttributes as `attr:${K}`]?: TjmkHospitalWlListAttributes[K] } & { [K in keyof TjmkHospitalWlList & keyof TjmkHospitalWlListAttributes as `prop:${K}`]?: TjmkHospitalWlList[K] };
+        "tjmk-medbed-app": Omit<TjmkMedbedApp, keyof TjmkMedbedAppAttributes> & { [K in keyof TjmkMedbedApp & keyof TjmkMedbedAppAttributes]?: TjmkMedbedApp[K] } & { [K in keyof TjmkMedbedApp & keyof TjmkMedbedAppAttributes as `attr:${K}`]?: TjmkMedbedAppAttributes[K] } & { [K in keyof TjmkMedbedApp & keyof TjmkMedbedAppAttributes as `prop:${K}`]?: TjmkMedbedApp[K] };
+        "tjmk-medbed-reservation-editor": Omit<TjmkMedbedReservationEditor, keyof TjmkMedbedReservationEditorAttributes> & { [K in keyof TjmkMedbedReservationEditor & keyof TjmkMedbedReservationEditorAttributes]?: TjmkMedbedReservationEditor[K] } & { [K in keyof TjmkMedbedReservationEditor & keyof TjmkMedbedReservationEditorAttributes as `attr:${K}`]?: TjmkMedbedReservationEditorAttributes[K] } & { [K in keyof TjmkMedbedReservationEditor & keyof TjmkMedbedReservationEditorAttributes as `prop:${K}`]?: TjmkMedbedReservationEditor[K] };
+        "tjmk-medbed-reservation-list": Omit<TjmkMedbedReservationList, keyof TjmkMedbedReservationListAttributes> & { [K in keyof TjmkMedbedReservationList & keyof TjmkMedbedReservationListAttributes]?: TjmkMedbedReservationList[K] } & { [K in keyof TjmkMedbedReservationList & keyof TjmkMedbedReservationListAttributes as `attr:${K}`]?: TjmkMedbedReservationListAttributes[K] } & { [K in keyof TjmkMedbedReservationList & keyof TjmkMedbedReservationListAttributes as `prop:${K}`]?: TjmkMedbedReservationList[K] };
+        "tjmk-medbed-stay-editor": Omit<TjmkMedbedStayEditor, keyof TjmkMedbedStayEditorAttributes> & { [K in keyof TjmkMedbedStayEditor & keyof TjmkMedbedStayEditorAttributes]?: TjmkMedbedStayEditor[K] } & { [K in keyof TjmkMedbedStayEditor & keyof TjmkMedbedStayEditorAttributes as `attr:${K}`]?: TjmkMedbedStayEditorAttributes[K] } & { [K in keyof TjmkMedbedStayEditor & keyof TjmkMedbedStayEditorAttributes as `prop:${K}`]?: TjmkMedbedStayEditor[K] };
+        "tjmk-medbed-stay-list": Omit<TjmkMedbedStayList, keyof TjmkMedbedStayListAttributes> & { [K in keyof TjmkMedbedStayList & keyof TjmkMedbedStayListAttributes]?: TjmkMedbedStayList[K] } & { [K in keyof TjmkMedbedStayList & keyof TjmkMedbedStayListAttributes as `attr:${K}`]?: TjmkMedbedStayListAttributes[K] } & { [K in keyof TjmkMedbedStayList & keyof TjmkMedbedStayListAttributes as `prop:${K}`]?: TjmkMedbedStayList[K] };
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "tjmk-hospital-wl-app": LocalJSX.IntrinsicElements["tjmk-hospital-wl-app"] & JSXBase.HTMLAttributes<HTMLTjmkHospitalWlAppElement>;
-            "tjmk-hospital-wl-editor": LocalJSX.IntrinsicElements["tjmk-hospital-wl-editor"] & JSXBase.HTMLAttributes<HTMLTjmkHospitalWlEditorElement>;
-            "tjmk-hospital-wl-list": LocalJSX.IntrinsicElements["tjmk-hospital-wl-list"] & JSXBase.HTMLAttributes<HTMLTjmkHospitalWlListElement>;
+            "tjmk-medbed-app": LocalJSX.IntrinsicElements["tjmk-medbed-app"] & JSXBase.HTMLAttributes<HTMLTjmkMedbedAppElement>;
+            "tjmk-medbed-reservation-editor": LocalJSX.IntrinsicElements["tjmk-medbed-reservation-editor"] & JSXBase.HTMLAttributes<HTMLTjmkMedbedReservationEditorElement>;
+            "tjmk-medbed-reservation-list": LocalJSX.IntrinsicElements["tjmk-medbed-reservation-list"] & JSXBase.HTMLAttributes<HTMLTjmkMedbedReservationListElement>;
+            "tjmk-medbed-stay-editor": LocalJSX.IntrinsicElements["tjmk-medbed-stay-editor"] & JSXBase.HTMLAttributes<HTMLTjmkMedbedStayEditorElement>;
+            "tjmk-medbed-stay-list": LocalJSX.IntrinsicElements["tjmk-medbed-stay-list"] & JSXBase.HTMLAttributes<HTMLTjmkMedbedStayListElement>;
         }
     }
 }

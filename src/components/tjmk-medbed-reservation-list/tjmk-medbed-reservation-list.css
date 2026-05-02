@@ -1,0 +1,71 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding-bottom: 4rem;
+}
+
+.error {
+  margin: auto;
+  color: red;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 2rem;
+}
+
+.filter-bar {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--md-sys-color-outline, #79747e);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.add-button {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  --md-filled-icon-button-container-size: 4rem;
+  --md-filled-icon-button-icon-size: 2.5rem;
+  z-index: 10;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-badge.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.status-confirmed {
+  background-color: #d1e7dd;
+  color: #0a3622;
+}
+
+.status-badge.status-cancelled {
+  background-color: #f8d7da;
+  color: #58151c;
+}
+
+md-list-item.status-cancelled {
+  opacity: 0.65;
+}
