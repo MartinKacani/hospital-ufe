@@ -17,6 +17,7 @@ export class TjmkMedbedReservationEditor {
   @State() errorMessage: string;
   @State() errors: Record<string, string> = {};
   @State() showErrors = false;
+  @State() confirmDeleteOpen = false;
 
   async componentWillLoad() {
     await this.loadEntry();
@@ -292,7 +293,7 @@ export class TjmkMedbedReservationEditor {
         <md-divider inset />
 
         <div class="actions">
-          <md-filled-tonal-button disabled={isNew} onClick={() => this.deleteEntry()}>
+          <md-filled-tonal-button disabled={isNew} onClick={() => { this.confirmDeleteOpen = true; }}>
             <md-icon slot="icon">delete</md-icon>
             Zrušiť objednávku
           </md-filled-tonal-button>
@@ -303,6 +304,20 @@ export class TjmkMedbedReservationEditor {
             Uložiť
           </md-filled-button>
         </div>
+
+        <md-dialog open={this.confirmDeleteOpen} onclose={() => { this.confirmDeleteOpen = false; }}>
+          <div slot="headline">Zrušiť objednávku?</div>
+          <div slot="content">
+            Naozaj chcete zrušiť objednávku pacienta <strong>{this.entry?.patientName}</strong>? Táto akcia sa nedá vrátiť.
+          </div>
+          <div slot="actions">
+            <md-outlined-button onClick={() => { this.confirmDeleteOpen = false; }}>Nie, späť</md-outlined-button>
+            <md-filled-tonal-button onClick={() => { this.confirmDeleteOpen = false; this.deleteEntry(); }}>
+              <md-icon slot="icon">delete</md-icon>
+              Áno, zrušiť
+            </md-filled-tonal-button>
+          </div>
+        </md-dialog>
       </Host>
     );
   }
