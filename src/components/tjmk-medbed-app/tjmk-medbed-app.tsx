@@ -11,6 +11,7 @@ export class TjmkMedbedApp {
   @State() private pendingReservations = 0;
   @State() private activeStays = 0;
   @State() private departments: Department[] = [];
+  @State() private selectedDepts: string[] = [];
   @Prop() basePath: string = '';
   @Prop() apiBase: string;
   @Prop() departmentId: string;
@@ -61,6 +62,19 @@ export class TjmkMedbedApp {
     } catch { /* non-critical */ }
   }
 
+  private toggleDept(id: string) {
+    if (this.selectedDepts.includes(id)) {
+      this.selectedDepts = this.selectedDepts.filter(d => d !== id);
+    } else {
+      this.selectedDepts = [...this.selectedDepts, id];
+    }
+  }
+
+  private visibleDepts(): Department[] {
+    if (this.selectedDepts.length === 0) return this.departments;
+    return this.departments.filter(d => this.selectedDepts.includes(d.id));
+  }
+
   render() {
     const navigate = (path: string) => {
       const absolute = new URL(path, new URL(this.basePath, document.baseURI)).pathname;
@@ -71,7 +85,7 @@ export class TjmkMedbedApp {
     if (this.relativePath.startsWith('reservations/')) {
       const parts = this.relativePath.split('/');
       const isNew = parts[1] === '@new';
-      const departmentId = isNew ? '' : parts[1];
+      const departmentId = isNew ? (this.departments[0]?.id ?? '') : parts[1];
       const reservationId = isNew ? '@new' : parts[2];
       return (
         <Host>
@@ -90,7 +104,7 @@ export class TjmkMedbedApp {
     if (this.relativePath.startsWith('stays/')) {
       const parts = this.relativePath.split('/');
       const isNew = parts[1] === '@new';
-      const departmentId = isNew ? '' : parts[1];
+      const departmentId = isNew ? (this.departments[0]?.id ?? '') : parts[1];
       const stayId = isNew ? '@new' : parts[2];
       return (
         <Host>
@@ -106,9 +120,7 @@ export class TjmkMedbedApp {
     }
 
     const activeTab = this.relativePath.startsWith('beds') ? 'beds' : 'reservations';
-    const deptLabel = this.departments.length === 1
-      ? (this.departments[0].name || this.departments[0].id)
-      : `${this.departments.length} oddelení`;
+    const visibleDepts = this.visibleDepts();
 
     return (
       <Host>
@@ -116,7 +128,6 @@ export class TjmkMedbedApp {
           <div class="app-header">
             <md-icon class="app-icon">bed</md-icon>
             <span class="app-title">MedBed</span>
-            <span class="app-department">{deptLabel}</span>
           </div>
           <md-tabs
             class="app-tabs"
@@ -137,15 +148,29 @@ export class TjmkMedbedApp {
             </md-primary-tab>
           </md-tabs>
 
+          {this.departments.length > 1 && (
+            <div class="dept-filter">
+              <md-chip-set>
+                {this.departments.map(d => (
+                  <md-filter-chip
+                    label={d.name || d.id}
+                    selected={this.selectedDepts.includes(d.id)}
+                    onclick={() => this.toggleDept(d.id)}
+                  />
+                ))}
+              </md-chip-set>
+            </div>
+          )}
+
           {activeTab === 'reservations' ? (
             <tjmk-medbed-reservation-list
-              departments={this.departments}
+              departments={visibleDepts}
               api-base={this.apiBase}
               onentry-clicked={(ev: CustomEvent<string>) => navigate('./reservations/' + ev.detail)}
             />
           ) : (
             <tjmk-medbed-stay-list
-              departments={this.departments}
+              departments={visibleDepts}
               api-base={this.apiBase}
               onentry-clicked={(ev: CustomEvent<string>) => navigate('./stays/' + ev.detail)}
             />

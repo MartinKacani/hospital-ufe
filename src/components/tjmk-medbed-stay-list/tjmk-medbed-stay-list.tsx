@@ -13,7 +13,6 @@ export class TjmkMedbedStayList {
   @State() errorMessage: string;
   @State() viewMode: 'list' | 'grid' = 'grid';
   @State() statusFilter: string = 'active_planned';
-  @State() deptFilter: string[] = [];
   @State() private stays: HospitalizationStay[] = [];
 
   async componentWillLoad() {
@@ -25,34 +24,20 @@ export class TjmkMedbedStayList {
     await this.loadAll();
   }
 
-  private activeDepts(): string[] {
-    const ids = this.departments.map(d => d.id);
-    return this.deptFilter.length > 0 ? this.deptFilter : ids;
-  }
-
   private async loadAll() {
     if (!this.departments?.length) return;
     try {
       const config = new Configuration({ basePath: this.apiBase });
       const api = new StaysApi(config);
       const results = await Promise.all(
-        this.activeDepts().map(dId =>
-          api.getStays({ departmentId: dId }).catch(() => [] as HospitalizationStay[])
+        this.departments.map(d =>
+          api.getStays({ departmentId: d.id }).catch(() => [] as HospitalizationStay[])
         )
       );
       this.stays = results.flat();
     } catch (err: any) {
       this.errorMessage = `Nepodarilo sa načítať hospitalizácie: ${err.message || 'neznáma chyba'}`;
     }
-  }
-
-  private toggleDept(id: string) {
-    if (this.deptFilter.includes(id)) {
-      this.deptFilter = this.deptFilter.filter(d => d !== id);
-    } else {
-      this.deptFilter = [...this.deptFilter, id];
-    }
-    this.loadAll();
   }
 
   private getStatusLabel(status: string): string {
@@ -85,8 +70,9 @@ export class TjmkMedbedStayList {
 
   private groupByRoom(stays: HospitalizationStay[]): Map<string, HospitalizationStay[]> {
     const rooms = new Map<string, HospitalizationStay[]>();
+    const multiDept = this.departments.length > 1;
     for (const stay of stays) {
-      const key = `${stays.filter(s => s.department !== stay.department).length > 0 ? stay.department + ' · ' : ''}Izba ${stay.roomNumber || 'Nepridelená'}`;
+      const key = `${multiDept ? stay.department + ' · ' : ''}Izba ${stay.roomNumber || 'Nepridelená'}`;
       if (!rooms.has(key)) rooms.set(key, []);
       rooms.get(key).push(stay);
     }
@@ -145,7 +131,7 @@ export class TjmkMedbedStayList {
 
   private renderList() {
     const filtered = this.filteredStays();
-    const showDeptChip = this.departments.length > 1;
+    const multiDept = this.departments.length > 1;
     if (filtered.length === 0) {
       return (
         <div class="empty-state">
@@ -164,7 +150,7 @@ export class TjmkMedbedStayList {
             <div slot="headline">{stay.patientName}</div>
             <div slot="supporting-text">
               Izba {stay.roomNumber} · Lôžko {stay.bedNumber} · {stay.from.toLocaleDateString('sk')} – {stay.to.toLocaleDateString('sk')}
-              {showDeptChip && ` · ${stay.department}`}
+              {multiDept && ` · ${stay.department}`}
             </div>
             <md-icon slot="start">{this.getStatusIcon(stay.status)}</md-icon>
             <span slot="end" class={`status-badge status-${stay.status}`}>{this.getStatusLabel(stay.status)}</span>
@@ -179,22 +165,9 @@ export class TjmkMedbedStayList {
       return <Host><div class="error">{this.errorMessage}</div></Host>;
     }
 
-    const showDeptChip = this.departments.length > 1;
-
     return (
       <Host>
         <div class="toolbar">
-          {showDeptChip && (
-            <md-chip-set class="dept-chips">
-              {this.departments.map(d => (
-                <md-filter-chip
-                  label={d.name || d.id}
-                  selected={this.deptFilter.includes(d.id)}
-                  onclick={() => this.toggleDept(d.id)}
-                />
-              ))}
-            </md-chip-set>
-          )}
           <div class="status-row">
             <md-chip-set>
               <md-filter-chip label="Aktívne / Plánované" selected={this.statusFilter === 'active_planned'} onclick={() => { this.statusFilter = 'active_planned'; }} />

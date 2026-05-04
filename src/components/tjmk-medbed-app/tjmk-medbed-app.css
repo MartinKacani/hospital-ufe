@@ -30,23 +30,18 @@
   letter-spacing: 0.05em;
 }
 
-.app-department {
-  font-size: 0.85rem;
-  opacity: 0.75;
-  margin-left: 0.5rem;
-  font-weight: 400;
-}
-
 .app-tabs {
   width: 100%;
   border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
   overflow: visible;
+  padding-top: 8px;
 }
 
 md-primary-tab {
   overflow: visible;
 }
 
-.app-tabs {
-  padding-top: 8px;
+.dept-filter {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
 }

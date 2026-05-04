@@ -12,7 +12,6 @@ export class TjmkMedbedReservationList {
   @Prop() departments: Department[] = [];
   @State() errorMessage: string;
   @State() statusFilter: string = 'all';
-  @State() deptFilter: string[] = [];
   @State() private reservations: Reservation[] = [];
 
   async componentWillLoad() {
@@ -24,34 +23,20 @@ export class TjmkMedbedReservationList {
     await this.loadAll();
   }
 
-  private activeDepts(): string[] {
-    const ids = this.departments.map(d => d.id);
-    return this.deptFilter.length > 0 ? this.deptFilter : ids;
-  }
-
   private async loadAll() {
     if (!this.departments?.length) return;
     try {
       const config = new Configuration({ basePath: this.apiBase });
       const api = new ReservationsApi(config);
       const results = await Promise.all(
-        this.activeDepts().map(dId =>
-          api.getReservations({ departmentId: dId }).catch(() => [] as Reservation[])
+        this.departments.map(d =>
+          api.getReservations({ departmentId: d.id }).catch(() => [] as Reservation[])
         )
       );
       this.reservations = results.flat();
     } catch (err: any) {
       this.errorMessage = `Nepodarilo sa načítať objednávky: ${err.message || 'neznáma chyba'}`;
     }
-  }
-
-  private toggleDept(id: string) {
-    if (this.deptFilter.includes(id)) {
-      this.deptFilter = this.deptFilter.filter(d => d !== id);
-    } else {
-      this.deptFilter = [...this.deptFilter, id];
-    }
-    this.loadAll();
   }
 
   private getStatusLabel(status: string): string {
@@ -83,22 +68,11 @@ export class TjmkMedbedReservationList {
     }
 
     const filtered = this.filtered();
-    const showDeptChip = this.departments.length > 1;
+    const multiDept = this.departments.length > 1;
 
     return (
       <Host>
         <div class="filter-bar">
-          {showDeptChip && (
-            <md-chip-set class="dept-chips">
-              {this.departments.map(d => (
-                <md-filter-chip
-                  label={d.name || d.id}
-                  selected={this.deptFilter.includes(d.id)}
-                  onclick={() => this.toggleDept(d.id)}
-                />
-              ))}
-            </md-chip-set>
-          )}
           <md-chip-set>
             <md-filter-chip label="Všetky" selected={this.statusFilter === 'all'} onclick={() => { this.statusFilter = 'all'; }} />
             <md-filter-chip label="Čakajúce" selected={this.statusFilter === 'pending'} onclick={() => { this.statusFilter = 'pending'; }} />
@@ -123,7 +97,7 @@ export class TjmkMedbedReservationList {
                 <div slot="supporting-text">
                   {r.reason} · {r.from.toLocaleDateString('sk')} – {r.to.toLocaleDateString('sk')}
                   {r.roomOrAmbulance && ` · ${r.roomOrAmbulance}`}
-                  {showDeptChip && ` · ${r.department}`}
+                  {multiDept && ` · ${r.department}`}
                 </div>
                 <md-icon slot="start">{this.getStatusIcon(r.status)}</md-icon>
                 <div slot="end">
