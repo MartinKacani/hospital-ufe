@@ -70,3 +70,34 @@ describe('validácia dátumov', () => {
     expect(to <= from).toBe(true);
   });
 });
+
+describe('validácia dátumu od pri novej objednávke', () => {
+  const isFromInPast = (from: Date): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return new Date(from) < today;
+  };
+
+  it('dnešný dátum je platný', () => {
+    const today = new Date();
+    expect(isFromInPast(today)).toBe(false);
+  });
+
+  it('zajtrajší dátum je platný', () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    expect(isFromInPast(tomorrow)).toBe(false);
+  });
+
+  it('včerajší dátum nie je platný', () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    expect(isFromInPast(yesterday)).toBe(true);
+  });
+
+  it('dátum spred mesiaca nie je platný', () => {
+    const past = new Date();
+    past.setMonth(past.getMonth() - 1);
+    expect(isFromInPast(past)).toBe(true);
+  });
+});
