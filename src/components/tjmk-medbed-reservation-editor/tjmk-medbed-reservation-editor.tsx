@@ -71,6 +71,12 @@ export class TjmkMedbedReservationEditor {
 
     if (!this.entry?.from)
       e.from = 'Dátum od je povinný';
+    else if (this.reservationId === '@new') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (new Date(this.entry.from) < today)
+        e.from = 'Dátum od nemôže byť v minulosti';
+    }
 
     if (!this.entry?.to)
       e.to = 'Dátum do je povinný';

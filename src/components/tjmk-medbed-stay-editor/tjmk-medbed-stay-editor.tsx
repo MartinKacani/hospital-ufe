@@ -28,11 +28,11 @@ export class TjmkMedbedStayEditor {
   private async loadReservations() {
     try {
       const api = new ReservationsApi(new Configuration({ basePath: this.apiBase }));
-      const response = await api.getReservationsRaw({ departmentId: this.departmentId });
-      if (response.raw.status < 299) {
-        const all = await response.value();
-        this.reservations = all.filter(r => r.status !== 'cancelled');
-      }
+      const depts = this.departments.length > 0 ? this.departments.map(d => d.id) : (this.departmentId ? [this.departmentId] : []);
+      const results = await Promise.all(
+        depts.map(dId => api.getReservations({ departmentId: dId }).catch(() => [] as Reservation[]))
+      );
+      this.reservations = results.flat().filter(r => r.status !== 'cancelled');
     } catch { /* non-critical */ }
   }
 
@@ -111,7 +111,7 @@ export class TjmkMedbedStayEditor {
   private fillFromReservation(reservationId: string) {
     const r = this.reservations.find(r => r.id === reservationId);
     if (r && this.entry) {
-      this.entry = { ...this.entry, reservationId: r.id, patientId: r.patientId, patientName: r.patientName, from: r.from, to: r.to };
+      this.entry = { ...this.entry, reservationId: r.id, department: r.department, patientId: r.patientId, patientName: r.patientName, from: r.from, to: r.to };
     }
   }
 
@@ -193,6 +193,7 @@ export class TjmkMedbedStayEditor {
               {this.reservations.map(r => (
                 <md-select-option value={r.id} selected={this.entry?.reservationId === r.id}>
                   <div slot="headline">{r.patientName} · {new Date(r.from).toLocaleDateString('sk')}</div>
+                  <div slot="supporting-text">{r.department}</div>
                 </md-select-option>
               ))}
             </md-filled-select>
@@ -211,7 +212,7 @@ export class TjmkMedbedStayEditor {
             );
           })()}
 
-          {this.departments.length > 1 ? (
+          {this.departments.length > 1 && !this.entry?.reservationId ? (
             <md-filled-select
               label="Oddelenie"
               required
