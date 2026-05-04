@@ -1,5 +1,5 @@
-import { Component, Event, EventEmitter, Host, Prop, State, h } from '@stencil/core';
-import { ReservationsApi, Reservation, Configuration } from '../../api/hospital-wl';
+import { Component, Event, EventEmitter, Host, Prop, State, Watch, h } from '@stencil/core';
+import { ReservationsApi, Reservation, Department, Configuration } from '../../api/hospital-wl';
 
 @Component({
   tag: 'tjmk-medbed-reservation-list',
@@ -9,30 +9,49 @@ import { ReservationsApi, Reservation, Configuration } from '../../api/hospital-
 export class TjmkMedbedReservationList {
   @Event({ eventName: 'entry-clicked' }) entryClicked: EventEmitter<string>;
   @Prop() apiBase: string;
-  @Prop() departmentId: string;
+  @Prop() departments: Department[] = [];
   @State() errorMessage: string;
   @State() statusFilter: string = 'all';
+  @State() deptFilter: string[] = [];
+  @State() private reservations: Reservation[] = [];
 
-  private reservations: Reservation[] = [];
+  async componentWillLoad() {
+    await this.loadAll();
+  }
 
-  private async getReservationsAsync(): Promise<Reservation[]> {
+  @Watch('departments')
+  async onDepartmentsChanged() {
+    await this.loadAll();
+  }
+
+  private activeDepts(): string[] {
+    const ids = this.departments.map(d => d.id);
+    return this.deptFilter.length > 0 ? this.deptFilter : ids;
+  }
+
+  private async loadAll() {
+    if (!this.departments?.length) return;
     try {
-      const configuration = new Configuration({ basePath: this.apiBase });
-      const api = new ReservationsApi(configuration);
-      const response = await api.getReservationsRaw({ departmentId: this.departmentId });
-      if (response.raw.status < 299) {
-        return await response.value();
-      } else {
-        this.errorMessage = `Nepodarilo sa načítať objednávky: ${response.raw.statusText}`;
-      }
+      const config = new Configuration({ basePath: this.apiBase });
+      const api = new ReservationsApi(config);
+      const results = await Promise.all(
+        this.activeDepts().map(dId =>
+          api.getReservations({ departmentId: dId }).catch(() => [] as Reservation[])
+        )
+      );
+      this.reservations = results.flat();
     } catch (err: any) {
       this.errorMessage = `Nepodarilo sa načítať objednávky: ${err.message || 'neznáma chyba'}`;
     }
-    return [];
   }
 
-  async componentWillLoad() {
-    this.reservations = await this.getReservationsAsync();
+  private toggleDept(id: string) {
+    if (this.deptFilter.includes(id)) {
+      this.deptFilter = this.deptFilter.filter(d => d !== id);
+    } else {
+      this.deptFilter = [...this.deptFilter, id];
+    }
+    this.loadAll();
   }
 
   private getStatusLabel(status: string): string {
@@ -53,46 +72,38 @@ export class TjmkMedbedReservationList {
     }
   }
 
-  private filteredReservations(): Reservation[] {
+  private filtered(): Reservation[] {
     if (this.statusFilter === 'all') return this.reservations;
     return this.reservations.filter(r => r.status === this.statusFilter);
   }
 
   render() {
     if (this.errorMessage) {
-      return (
-        <Host>
-          <div class="error">{this.errorMessage}</div>
-        </Host>
-      );
+      return <Host><div class="error">{this.errorMessage}</div></Host>;
     }
 
-    const filtered = this.filteredReservations();
+    const filtered = this.filtered();
+    const showDeptChip = this.departments.length > 1;
 
     return (
       <Host>
         <div class="filter-bar">
+          {showDeptChip && (
+            <md-chip-set class="dept-chips">
+              {this.departments.map(d => (
+                <md-filter-chip
+                  label={d.name || d.id}
+                  selected={this.deptFilter.includes(d.id)}
+                  onclick={() => this.toggleDept(d.id)}
+                />
+              ))}
+            </md-chip-set>
+          )}
           <md-chip-set>
-            <md-filter-chip
-              label="Všetky"
-              selected={this.statusFilter === 'all'}
-              onclick={() => { this.statusFilter = 'all'; }}
-            />
-            <md-filter-chip
-              label="Čakajúce"
-              selected={this.statusFilter === 'pending'}
-              onclick={() => { this.statusFilter = 'pending'; }}
-            />
-            <md-filter-chip
-              label="Potvrdené"
-              selected={this.statusFilter === 'confirmed'}
-              onclick={() => { this.statusFilter = 'confirmed'; }}
-            />
-            <md-filter-chip
-              label="Zrušené"
-              selected={this.statusFilter === 'cancelled'}
-              onclick={() => { this.statusFilter = 'cancelled'; }}
-            />
+            <md-filter-chip label="Všetky" selected={this.statusFilter === 'all'} onclick={() => { this.statusFilter = 'all'; }} />
+            <md-filter-chip label="Čakajúce" selected={this.statusFilter === 'pending'} onclick={() => { this.statusFilter = 'pending'; }} />
+            <md-filter-chip label="Potvrdené" selected={this.statusFilter === 'confirmed'} onclick={() => { this.statusFilter = 'confirmed'; }} />
+            <md-filter-chip label="Zrušené" selected={this.statusFilter === 'cancelled'} onclick={() => { this.statusFilter = 'cancelled'; }} />
           </md-chip-set>
         </div>
 
@@ -103,31 +114,27 @@ export class TjmkMedbedReservationList {
           </div>
         ) : (
           <md-list>
-            {filtered.map(reservation => (
+            {filtered.map(r => (
               <md-list-item
-                class={`reservation-item status-${reservation.status}`}
-                onClick={() => this.entryClicked.emit(reservation.id)}
+                class={`reservation-item status-${r.status}`}
+                onClick={() => this.entryClicked.emit(`${r.department}/${r.id}`)}
               >
-                <div slot="headline">{reservation.patientName}</div>
+                <div slot="headline">{r.patientName}</div>
                 <div slot="supporting-text">
-                  {reservation.reason} · {reservation.from.toLocaleDateString('sk')} – {reservation.to.toLocaleDateString('sk')}
-                  {reservation.roomOrAmbulance && ` · ${reservation.roomOrAmbulance}`}
+                  {r.reason} · {r.from.toLocaleDateString('sk')} – {r.to.toLocaleDateString('sk')}
+                  {r.roomOrAmbulance && ` · ${r.roomOrAmbulance}`}
+                  {showDeptChip && ` · ${r.department}`}
                 </div>
-                <md-icon slot="start">{this.getStatusIcon(reservation.status)}</md-icon>
+                <md-icon slot="start">{this.getStatusIcon(r.status)}</md-icon>
                 <div slot="end">
-                  <span class={`status-badge status-${reservation.status}`}>
-                    {this.getStatusLabel(reservation.status)}
-                  </span>
+                  <span class={`status-badge status-${r.status}`}>{this.getStatusLabel(r.status)}</span>
                 </div>
               </md-list-item>
             ))}
           </md-list>
         )}
 
-        <md-filled-icon-button
-          class="add-button"
-          onclick={() => this.entryClicked.emit('@new')}
-        >
+        <md-filled-icon-button class="add-button" onclick={() => this.entryClicked.emit('@new')}>
           <md-icon>add</md-icon>
         </md-filled-icon-button>
       </Host>

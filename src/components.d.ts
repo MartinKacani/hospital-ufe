@@ -5,6 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { Department } from "./api/hospital-wl";
+export { Department } from "./api/hospital-wl";
 export namespace Components {
     interface TjmkMedbedApp {
         "apiBase": string;
@@ -17,20 +19,34 @@ export namespace Components {
     interface TjmkMedbedReservationEditor {
         "apiBase": string;
         "departmentId": string;
+        /**
+          * @default []
+         */
+        "departments": Department[];
         "reservationId": string;
     }
     interface TjmkMedbedReservationList {
         "apiBase": string;
-        "departmentId": string;
+        /**
+          * @default []
+         */
+        "departments": Department[];
     }
     interface TjmkMedbedStayEditor {
         "apiBase": string;
         "departmentId": string;
+        /**
+          * @default []
+         */
+        "departments": Department[];
         "stayId": string;
     }
     interface TjmkMedbedStayList {
         "apiBase": string;
-        "departmentId": string;
+        /**
+          * @default []
+         */
+        "departments": Department[];
     }
 }
 export interface TjmkMedbedReservationEditorCustomEvent<T> extends CustomEvent<T> {
@@ -144,23 +160,37 @@ declare namespace LocalJSX {
     interface TjmkMedbedReservationEditor {
         "apiBase"?: string;
         "departmentId"?: string;
+        /**
+          * @default []
+         */
+        "departments"?: Department[];
         "onEditor-closed"?: (event: TjmkMedbedReservationEditorCustomEvent<string>) => void;
         "reservationId"?: string;
     }
     interface TjmkMedbedReservationList {
         "apiBase"?: string;
-        "departmentId"?: string;
+        /**
+          * @default []
+         */
+        "departments"?: Department[];
         "onEntry-clicked"?: (event: TjmkMedbedReservationListCustomEvent<string>) => void;
     }
     interface TjmkMedbedStayEditor {
         "apiBase"?: string;
         "departmentId"?: string;
+        /**
+          * @default []
+         */
+        "departments"?: Department[];
         "onEditor-closed"?: (event: TjmkMedbedStayEditorCustomEvent<string>) => void;
         "stayId"?: string;
     }
     interface TjmkMedbedStayList {
         "apiBase"?: string;
-        "departmentId"?: string;
+        /**
+          * @default []
+         */
+        "departments"?: Department[];
         "onEntry-clicked"?: (event: TjmkMedbedStayListCustomEvent<string>) => void;
     }
 
@@ -176,7 +206,6 @@ declare namespace LocalJSX {
     }
     interface TjmkMedbedReservationListAttributes {
         "apiBase": string;
-        "departmentId": string;
     }
     interface TjmkMedbedStayEditorAttributes {
         "stayId": string;
@@ -185,7 +214,6 @@ declare namespace LocalJSX {
     }
     interface TjmkMedbedStayListAttributes {
         "apiBase": string;
-        "departmentId": string;
     }
 
     interface IntrinsicElements {

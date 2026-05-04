@@ -1,5 +1,5 @@
 import { Component, Host, Prop, State, h } from '@stencil/core';
-import { ReservationsApi, StaysApi, Configuration } from '../../api/hospital-wl';
+import { ReservationsApi, StaysApi, DepartmentsApi, Department, Configuration } from '../../api/hospital-wl';
 
 @Component({
   tag: 'tjmk-medbed-app',
@@ -10,13 +10,13 @@ export class TjmkMedbedApp {
   @State() private relativePath = '';
   @State() private pendingReservations = 0;
   @State() private activeStays = 0;
+  @State() private departments: Department[] = [];
   @Prop() basePath: string = '';
   @Prop() apiBase: string;
   @Prop() departmentId: string;
 
   async componentWillLoad() {
     const baseUri = new URL(this.basePath, document.baseURI || '/').pathname;
-
     const toRelative = (path: string) => {
       if (path.startsWith(baseUri)) {
         this.relativePath = path.slice(baseUri.length);
@@ -26,69 +26,96 @@ export class TjmkMedbedApp {
     };
 
     window.navigation?.addEventListener('navigate', (ev: Event) => {
-      if ((ev as any).canIntercept) {
-        (ev as any).intercept();
-      }
-      let path = new URL((ev as any).destination.url).pathname;
-      toRelative(path);
+      if ((ev as any).canIntercept) (ev as any).intercept();
+      toRelative(new URL((ev as any).destination.url).pathname);
     });
 
     toRelative(location.pathname);
+    await this.loadDepartments();
     this.loadCounts();
   }
 
+  private async loadDepartments() {
+    try {
+      const depts = await new DepartmentsApi(new Configuration({ basePath: this.apiBase })).getDepartments();
+      // If departmentId prop is set, restrict to that single department
+      if (this.departmentId) {
+        const match = depts.find(d => d.id === this.departmentId);
+        this.departments = match ? [match] : [{ id: this.departmentId, name: this.departmentId }];
+      } else {
+        this.departments = depts;
+      }
+    } catch {
+      // Fallback: use prop value if API fails
+      if (this.departmentId) {
+        this.departments = [{ id: this.departmentId, name: this.departmentId }];
+      }
+    }
+  }
+
   private async loadCounts() {
+    if (!this.departments.length) return;
     try {
       const config = new Configuration({ basePath: this.apiBase });
-      const [reservations, stays] = await Promise.all([
-        new ReservationsApi(config).getReservations({ departmentId: this.departmentId }),
-        new StaysApi(config).getStays({ departmentId: this.departmentId }),
-      ]);
-      this.pendingReservations = reservations.filter(r => r.status === 'pending').length;
-      this.activeStays = stays.filter(s => s.status === 'active' || s.status === 'planned').length;
+      const results = await Promise.all(
+        this.departments.map(d => Promise.all([
+          new ReservationsApi(config).getReservations({ departmentId: d.id }).catch(() => []),
+          new StaysApi(config).getStays({ departmentId: d.id }).catch(() => []),
+        ]))
+      );
+      this.pendingReservations = results.flatMap(([r]) => r).filter((r: any) => r.status === 'pending').length;
+      this.activeStays = results.flatMap(([, s]) => s).filter((s: any) => s.status === 'active' || s.status === 'planned').length;
     } catch { /* non-critical */ }
   }
 
   render() {
-    console.debug('tjmk-medbed-app.render() - path: %s', this.relativePath);
-
     const navigate = (path: string) => {
       const absolute = new URL(path, new URL(this.basePath, document.baseURI)).pathname;
       window.navigation.navigate(absolute);
     };
 
-    // Route: /reservations/{id} → reservation editor
+    // Route: reservations/@new or reservations/{deptId}/{id}
     if (this.relativePath.startsWith('reservations/')) {
-      const reservationId = this.relativePath.split('/')[1];
+      const parts = this.relativePath.split('/');
+      const isNew = parts[1] === '@new';
+      const departmentId = isNew ? '' : parts[1];
+      const reservationId = isNew ? '@new' : parts[2];
       return (
         <Host>
           <tjmk-medbed-reservation-editor
             reservation-id={reservationId}
-            department-id={this.departmentId}
+            department-id={departmentId}
+            departments={this.departments}
             api-base={this.apiBase}
-            oneditor-closed={() => navigate('./list')}
+            oneditor-closed={() => { this.loadCounts(); navigate('./list'); }}
           />
         </Host>
       );
     }
 
-    // Route: /stays/{id} → stay editor
+    // Route: stays/@new or stays/{deptId}/{id}
     if (this.relativePath.startsWith('stays/')) {
-      const stayId = this.relativePath.split('/')[1];
+      const parts = this.relativePath.split('/');
+      const isNew = parts[1] === '@new';
+      const departmentId = isNew ? '' : parts[1];
+      const stayId = isNew ? '@new' : parts[2];
       return (
         <Host>
           <tjmk-medbed-stay-editor
             stay-id={stayId}
-            department-id={this.departmentId}
+            department-id={departmentId}
+            departments={this.departments}
             api-base={this.apiBase}
-            oneditor-closed={() => navigate('./list')}
+            oneditor-closed={() => { this.loadCounts(); navigate('./list'); }}
           />
         </Host>
       );
     }
 
-    // Determine which tab is active
     const activeTab = this.relativePath.startsWith('beds') ? 'beds' : 'reservations';
+    const deptLabel = this.departments.length === 1
+      ? (this.departments[0].name || this.departments[0].id)
+      : `${this.departments.length} oddelení`;
 
     return (
       <Host>
@@ -96,7 +123,7 @@ export class TjmkMedbedApp {
           <div class="app-header">
             <md-icon class="app-icon">bed</md-icon>
             <span class="app-title">MedBed</span>
-            <span class="app-department">{this.departmentId}</span>
+            <span class="app-department">{deptLabel}</span>
           </div>
           <md-tabs
             class="app-tabs"
@@ -105,18 +132,12 @@ export class TjmkMedbedApp {
               navigate(idx === 0 ? './reservations' : './beds');
             }}
           >
-            <md-primary-tab
-              class={activeTab === 'reservations' ? 'active-tab' : ''}
-              active={activeTab === 'reservations'}
-            >
+            <md-primary-tab active={activeTab === 'reservations'}>
               <md-icon slot="icon">event_note</md-icon>
               Objednávky
               {this.pendingReservations > 0 && <md-badge value={String(this.pendingReservations)} />}
             </md-primary-tab>
-            <md-primary-tab
-              class={activeTab === 'beds' ? 'active-tab' : ''}
-              active={activeTab === 'beds'}
-            >
+            <md-primary-tab active={activeTab === 'beds'}>
               <md-icon slot="icon">bed</md-icon>
               Hospitalizácie
               {this.activeStays > 0 && <md-badge value={String(this.activeStays)} />}
@@ -125,19 +146,15 @@ export class TjmkMedbedApp {
 
           {activeTab === 'reservations' ? (
             <tjmk-medbed-reservation-list
-              department-id={this.departmentId}
+              departments={this.departments}
               api-base={this.apiBase}
-              onentry-clicked={(ev: CustomEvent<string>) =>
-                navigate('./reservations/' + ev.detail)
-              }
+              onentry-clicked={(ev: CustomEvent<string>) => navigate('./reservations/' + ev.detail)}
             />
           ) : (
             <tjmk-medbed-stay-list
-              department-id={this.departmentId}
+              departments={this.departments}
               api-base={this.apiBase}
-              onentry-clicked={(ev: CustomEvent<string>) =>
-                navigate('./stays/' + ev.detail)
-              }
+              onentry-clicked={(ev: CustomEvent<string>) => navigate('./stays/' + ev.detail)}
             />
           )}
         </div>

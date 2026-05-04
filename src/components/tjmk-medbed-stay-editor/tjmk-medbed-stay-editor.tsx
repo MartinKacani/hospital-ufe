@@ -1,5 +1,5 @@
 import { Component, Event, EventEmitter, Host, Prop, State, h } from '@stencil/core';
-import { StaysApi, HospitalizationStay, ReservationsApi, Reservation, Configuration } from '../../api/hospital-wl';
+import { StaysApi, HospitalizationStay, ReservationsApi, Reservation, Department, Configuration } from '../../api/hospital-wl';
 
 @Component({
   tag: 'tjmk-medbed-stay-editor',
@@ -10,6 +10,7 @@ export class TjmkMedbedStayEditor {
   @Prop() stayId: string;
   @Prop() departmentId: string;
   @Prop() apiBase: string;
+  @Prop() departments: Department[] = [];
 
   @Event({ eventName: 'editor-closed' }) editorClosed: EventEmitter<string>;
 
@@ -120,9 +121,10 @@ export class TjmkMedbedStayEditor {
 
     try {
       const api = new StaysApi(new Configuration({ basePath: this.apiBase }));
+      const deptId = this.entry.department || this.departmentId;
       const response = this.stayId === '@new'
-        ? await api.createStayRaw({ departmentId: this.departmentId, stay: this.entry })
-        : await api.updateStayRaw({ departmentId: this.departmentId, stayId: this.stayId, stay: this.entry });
+        ? await api.createStayRaw({ departmentId: deptId, stay: this.entry })
+        : await api.updateStayRaw({ departmentId: deptId, stayId: this.stayId, stay: this.entry });
 
       if (response.raw.status < 299) {
         this.editorClosed.emit('store');
@@ -209,13 +211,30 @@ export class TjmkMedbedStayEditor {
             );
           })()}
 
-          <md-filled-text-field
-            label="Oddelenie"
-            value={this.entry?.department}
-            readonly
-          >
-            <md-icon slot="leading-icon">local_hospital</md-icon>
-          </md-filled-text-field>
+          {this.departments.length > 1 ? (
+            <md-filled-select
+              label="Oddelenie"
+              required
+              oninput={(ev: InputEvent) => {
+                if (this.entry) { this.entry = { ...this.entry, department: (ev.target as HTMLInputElement).value }; }
+              }}
+            >
+              <md-icon slot="leading-icon">local_hospital</md-icon>
+              {this.departments.map(d => (
+                <md-select-option value={d.id} selected={this.entry?.department === d.id}>
+                  <div slot="headline">{d.name || d.id}</div>
+                </md-select-option>
+              ))}
+            </md-filled-select>
+          ) : (
+            <md-filled-text-field
+              label="Oddelenie"
+              value={this.entry?.department}
+              readonly
+            >
+              <md-icon slot="leading-icon">local_hospital</md-icon>
+            </md-filled-text-field>
+          )}
 
           <md-filled-text-field
             label="Meno a priezvisko pacienta"
