@@ -39,3 +39,7 @@
 md-primary-tab {
   overflow: visible;
 }
+
+.app-tabs {
+  padding-top: 8px;
+}
