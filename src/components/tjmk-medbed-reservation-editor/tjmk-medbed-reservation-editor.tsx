@@ -239,6 +239,18 @@ export class TjmkMedbedReservationEditor {
             <md-icon slot="leading-icon">phone</md-icon>
           </md-filled-text-field>
 
+          <md-filled-text-field
+            label="Miestnosť / ambulancia"
+            placeholder="Napr. Ambulancia 2B"
+            value={this.entry?.roomOrAmbulance}
+            supporting-text="Voliteľné"
+            oninput={(ev: InputEvent) => {
+              if (this.entry) { this.entry = { ...this.entry, roomOrAmbulance: (ev.target as HTMLInputElement).value }; }
+            }}
+          >
+            <md-icon slot="leading-icon">meeting_room</md-icon>
+          </md-filled-text-field>
+
           {!isNew && (
             <md-filled-select
               label="Stav objednávky"

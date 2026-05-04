@@ -111,6 +111,7 @@ export class TjmkMedbedReservationList {
                 <div slot="headline">{reservation.patientName}</div>
                 <div slot="supporting-text">
                   {reservation.reason} · {reservation.from.toLocaleDateString('sk')} – {reservation.to.toLocaleDateString('sk')}
+                  {reservation.roomOrAmbulance && ` · ${reservation.roomOrAmbulance}`}
                 </div>
                 <md-icon slot="start">{this.getStatusIcon(reservation.status)}</md-icon>
                 <div slot="end">
