@@ -349,7 +349,7 @@ export class TjmkMedbedStayEditor {
         <div class="actions">
           <md-filled-tonal-button disabled={isNew} onClick={() => { this.confirmDeleteOpen = true; }}>
             <md-icon slot="icon">delete</md-icon>
-            Zrušiť pobyt
+            Odstrániť pobyt
           </md-filled-tonal-button>
           <span class="stretch-fill" />
           <md-outlined-button onClick={() => this.editorClosed.emit('cancel')}>Späť</md-outlined-button>
@@ -360,15 +360,15 @@ export class TjmkMedbedStayEditor {
         </div>
 
         <md-dialog open={this.confirmDeleteOpen} onclose={() => { this.confirmDeleteOpen = false; }}>
-          <div slot="headline">Zrušiť pobyt?</div>
+          <div slot="headline">Odstrániť pobyt?</div>
           <div slot="content">
-            Naozaj chcete zrušiť pobyt pacienta <strong>{this.entry?.patientName}</strong>? Táto akcia sa nedá vrátiť.
+            Naozaj chcete odstrániť pobyt pacienta <strong>{this.entry?.patientName}</strong>? Táto akcia sa nedá vrátiť.
           </div>
           <div slot="actions">
             <md-outlined-button onClick={() => { this.confirmDeleteOpen = false; }}>Nie, späť</md-outlined-button>
             <md-filled-tonal-button onClick={() => { this.confirmDeleteOpen = false; this.deleteEntry(); }}>
               <md-icon slot="icon">delete</md-icon>
-              Áno, zrušiť
+              Áno, odstrániť
             </md-filled-tonal-button>
           </div>
         </md-dialog>
