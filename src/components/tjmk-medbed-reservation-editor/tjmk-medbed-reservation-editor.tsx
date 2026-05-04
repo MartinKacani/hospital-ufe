@@ -151,6 +151,14 @@ export class TjmkMedbedReservationEditor {
 
         <div class="form">
           <md-filled-text-field
+            label="Oddelenie"
+            value={this.entry?.department}
+            readonly
+          >
+            <md-icon slot="leading-icon">local_hospital</md-icon>
+          </md-filled-text-field>
+
+          <md-filled-text-field
             label="Meno a priezvisko pacienta"
             required
             placeholder="Ján Novák"
