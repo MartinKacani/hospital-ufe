@@ -38,15 +38,8 @@ export class TjmkMedbedApp {
   private async loadDepartments() {
     try {
       const depts = await new DepartmentsApi(new Configuration({ basePath: this.apiBase })).getDepartments();
-      // If departmentId prop is set, restrict to that single department
-      if (this.departmentId) {
-        const match = depts.find(d => d.id === this.departmentId);
-        this.departments = match ? [match] : [{ id: this.departmentId, name: this.departmentId }];
-      } else {
-        this.departments = depts;
-      }
+      this.departments = depts.length > 0 ? depts : (this.departmentId ? [{ id: this.departmentId, name: this.departmentId }] : []);
     } catch {
-      // Fallback: use prop value if API fails
       if (this.departmentId) {
         this.departments = [{ id: this.departmentId, name: this.departmentId }];
       }
