@@ -15,6 +15,7 @@ import '@material/web/tabs/primary-tab'
 import '@material/web/chips/chip-set'
 import '@material/web/chips/filter-chip'
 import '@material/web/dialog/dialog'
+import '@material/web/labs/badge/badge'
 import { registerNavigationApi } from './navigation.js'
 
 export default function() {

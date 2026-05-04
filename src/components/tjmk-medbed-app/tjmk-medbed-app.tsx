@@ -1,4 +1,5 @@
 import { Component, Host, Prop, State, h } from '@stencil/core';
+import { ReservationsApi, StaysApi, Configuration } from '../../api/hospital-wl';
 
 @Component({
   tag: 'tjmk-medbed-app',
@@ -7,11 +8,13 @@ import { Component, Host, Prop, State, h } from '@stencil/core';
 })
 export class TjmkMedbedApp {
   @State() private relativePath = '';
+  @State() private pendingReservations = 0;
+  @State() private activeStays = 0;
   @Prop() basePath: string = '';
   @Prop() apiBase: string;
   @Prop() departmentId: string;
 
-  componentWillLoad() {
+  async componentWillLoad() {
     const baseUri = new URL(this.basePath, document.baseURI || '/').pathname;
 
     const toRelative = (path: string) => {
@@ -31,6 +34,19 @@ export class TjmkMedbedApp {
     });
 
     toRelative(location.pathname);
+    this.loadCounts();
+  }
+
+  private async loadCounts() {
+    try {
+      const config = new Configuration({ basePath: this.apiBase });
+      const [reservations, stays] = await Promise.all([
+        new ReservationsApi(config).getReservations({ departmentId: this.departmentId }),
+        new StaysApi(config).getStays({ departmentId: this.departmentId }),
+      ]);
+      this.pendingReservations = reservations.filter(r => r.status === 'pending').length;
+      this.activeStays = stays.filter(s => s.status === 'active' || s.status === 'planned').length;
+    } catch { /* non-critical */ }
   }
 
   render() {
@@ -94,6 +110,7 @@ export class TjmkMedbedApp {
             >
               <md-icon slot="icon">event_note</md-icon>
               Objednávky
+              {this.pendingReservations > 0 && <md-badge value={String(this.pendingReservations)} />}
             </md-primary-tab>
             <md-primary-tab
               class={activeTab === 'beds' ? 'active-tab' : ''}
@@ -101,6 +118,7 @@ export class TjmkMedbedApp {
             >
               <md-icon slot="icon">bed</md-icon>
               Hospitalizácie
+              {this.activeStays > 0 && <md-badge value={String(this.activeStays)} />}
             </md-primary-tab>
           </md-tabs>
 
