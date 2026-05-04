@@ -196,6 +196,19 @@ export class TjmkMedbedStayEditor {
             </md-filled-select>
           )}
 
+          {!isNew && this.entry?.reservationId && (() => {
+            const linked = this.reservations.find(r => r.id === this.entry.reservationId);
+            return (
+              <md-filled-text-field
+                label="Naviazaná objednávka"
+                value={linked ? `${linked.patientName} · ${new Date(linked.from).toLocaleDateString('sk')} – ${new Date(linked.to).toLocaleDateString('sk')}` : this.entry.reservationId}
+                readonly
+              >
+                <md-icon slot="leading-icon">event_note</md-icon>
+              </md-filled-text-field>
+            );
+          })()}
+
           <md-filled-text-field
             label="Meno a priezvisko pacienta"
             required
