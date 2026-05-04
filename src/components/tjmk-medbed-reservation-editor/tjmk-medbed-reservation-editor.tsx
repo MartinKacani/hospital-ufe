@@ -15,9 +15,8 @@ export class TjmkMedbedReservationEditor {
 
   @State() entry: Reservation;
   @State() errorMessage: string;
-  @State() isValid: boolean = false;
-
-  private formElement: HTMLFormElement;
+  @State() errors: Record<string, string> = {};
+  @State() showErrors = false;
 
   async componentWillLoad() {
     await this.loadEntry();
@@ -26,8 +25,8 @@ export class TjmkMedbedReservationEditor {
   private async loadEntry() {
     if (this.reservationId === '@new') {
       const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 7);
+      const inWeek = new Date(now);
+      inWeek.setDate(inWeek.getDate() + 7);
       this.entry = {
         id: '@new',
         patientId: '',
@@ -35,21 +34,16 @@ export class TjmkMedbedReservationEditor {
         department: this.departmentId,
         reason: '',
         from: now,
-        to: tomorrow,
+        to: inWeek,
         status: 'pending',
       };
       return;
     }
     try {
-      const configuration = new Configuration({ basePath: this.apiBase });
-      const api = new ReservationsApi(configuration);
-      const response = await api.getReservationRaw({
-        departmentId: this.departmentId,
-        reservationId: this.reservationId,
-      });
+      const api = new ReservationsApi(new Configuration({ basePath: this.apiBase }));
+      const response = await api.getReservationRaw({ departmentId: this.departmentId, reservationId: this.reservationId });
       if (response.raw.status < 299) {
         this.entry = await response.value();
-        this.isValid = true;
       } else {
         this.errorMessage = `Nepodarilo sa načítať objednávku: ${response.raw.statusText}`;
       }
@@ -58,77 +52,77 @@ export class TjmkMedbedReservationEditor {
     }
   }
 
+  private validate(): boolean {
+    const e: Record<string, string> = {};
+    const rc = /^\d{6}\/?[0-9]{3,4}$/;
+
+    if (!this.entry?.patientName?.trim())
+      e.patientName = 'Meno pacienta je povinné';
+
+    if (!this.entry?.patientId?.trim())
+      e.patientId = 'Rodné číslo je povinné';
+    else if (!rc.test(this.entry.patientId.replace(/\s/g, '')))
+      e.patientId = 'Rodné číslo musí byť vo formáte RRMMDD/XXXX alebo RRMMDDXXXX';
+
+    if (!this.entry?.reason?.trim())
+      e.reason = 'Dôvod hospitalizácie je povinný';
+
+    if (!this.entry?.from)
+      e.from = 'Dátum od je povinný';
+
+    if (!this.entry?.to)
+      e.to = 'Dátum do je povinný';
+    else if (this.entry.from && this.entry.to <= this.entry.from)
+      e.to = 'Dátum do musí byť neskorší ako dátum od';
+
+    if (this.entry?.status === 'cancelled' && !this.entry?.cancelReason?.trim())
+      e.cancelReason = 'Pri zrušení je dôvod povinný';
+
+    this.errors = e;
+    return Object.keys(e).length === 0;
+  }
+
   private formatDateForInput(date: Date): string {
     if (!date) return '';
-    return date.toISOString().slice(0, 16);
-  }
-
-  private handleInputEvent(ev: InputEvent): string {
-    const target = ev.target as HTMLInputElement;
-    this.validateForm('silent');
-    return target.value;
-  }
-
-  private validateForm(mode: 'silent' | 'show-errors'): boolean {
-    if (!this.formElement) return false;
-    this.isValid = true;
-    for (let i = 0; i < this.formElement.children.length; i++) {
-      const element = this.formElement.children[i] as HTMLElement & {
-        checkValidity?: () => boolean;
-        reportValidity?: () => boolean;
-      };
-      let valid = true;
-      if (mode === 'show-errors' && element.reportValidity) {
-        valid = element.reportValidity();
-      } else if (element.checkValidity) {
-        valid = element.checkValidity();
-      }
-      this.isValid &&= valid;
-    }
-    return this.isValid;
+    return new Date(date).toISOString().slice(0, 16);
   }
 
   private async saveEntry() {
-    if (!this.validateForm('show-errors')) return;
+    this.showErrors = true;
+    if (!this.validate()) return;
 
     try {
-      const configuration = new Configuration({ basePath: this.apiBase });
-      const api = new ReservationsApi(configuration);
-
+      const api = new ReservationsApi(new Configuration({ basePath: this.apiBase }));
       const response = this.reservationId === '@new'
         ? await api.createReservationRaw({ departmentId: this.departmentId, reservation: this.entry })
-        : await api.updateReservationRaw({
-            departmentId: this.departmentId,
-            reservationId: this.reservationId,
-            reservation: this.entry,
-          });
+        : await api.updateReservationRaw({ departmentId: this.departmentId, reservationId: this.reservationId, reservation: this.entry });
 
       if (response.raw.status < 299) {
         this.editorClosed.emit('store');
       } else {
-        this.errorMessage = `Nepodarilo sa uložiť objednávku: ${response.raw.statusText}`;
+        this.errorMessage = `Nepodarilo sa uložiť: ${response.raw.statusText}`;
       }
     } catch (err: any) {
-      this.errorMessage = `Nepodarilo sa uložiť objednávku: ${err.message || 'neznáma chyba'}`;
+      this.errorMessage = `Nepodarilo sa uložiť: ${err.message || 'neznáma chyba'}`;
     }
   }
 
   private async deleteEntry() {
     try {
-      const configuration = new Configuration({ basePath: this.apiBase });
-      const api = new ReservationsApi(configuration);
-      const response = await api.deleteReservationRaw({
-        departmentId: this.departmentId,
-        reservationId: this.reservationId,
-      });
+      const api = new ReservationsApi(new Configuration({ basePath: this.apiBase }));
+      const response = await api.deleteReservationRaw({ departmentId: this.departmentId, reservationId: this.reservationId });
       if (response.raw.status < 299) {
         this.editorClosed.emit('delete');
       } else {
-        this.errorMessage = `Nepodarilo sa zrušiť objednávku: ${response.raw.statusText}`;
+        this.errorMessage = `Nepodarilo sa zrušiť: ${response.raw.statusText}`;
       }
     } catch (err: any) {
-      this.errorMessage = `Nepodarilo sa zrušiť objednávku: ${err.message || 'neznáma chyba'}`;
+      this.errorMessage = `Nepodarilo sa zrušiť: ${err.message || 'neznáma chyba'}`;
     }
+  }
+
+  private err(field: string) {
+    return this.showErrors && this.errors[field];
   }
 
   render() {
@@ -137,9 +131,7 @@ export class TjmkMedbedReservationEditor {
         <Host>
           <div class="error">{this.errorMessage}</div>
           <div class="actions">
-            <md-outlined-button onClick={() => this.editorClosed.emit('cancel')}>
-              Späť
-            </md-outlined-button>
+            <md-outlined-button onClick={() => this.editorClosed.emit('cancel')}>Späť</md-outlined-button>
           </div>
         </Host>
       );
@@ -153,31 +145,37 @@ export class TjmkMedbedReservationEditor {
           <md-icon-button onclick={() => this.editorClosed.emit('cancel')}>
             <md-icon>arrow_back</md-icon>
           </md-icon-button>
-          <span class="editor-title">
-            {isNew ? 'Nová objednávka' : 'Úprava objednávky'}
-          </span>
+          <span class="editor-title">{isNew ? 'Nová objednávka' : 'Úprava objednávky'}</span>
         </div>
 
-        <form ref={el => (this.formElement = el)}>
+        <div class="form">
           <md-filled-text-field
             label="Meno a priezvisko pacienta"
             required
-            pattern=".*\S.*"
+            placeholder="Ján Novák"
             value={this.entry?.patientName}
+            error={!!this.err('patientName')}
+            error-text={this.err('patientName') || ''}
+            supporting-text="Napr. Ján Novák"
             oninput={(ev: InputEvent) => {
-              if (this.entry) this.entry.patientName = this.handleInputEvent(ev);
+              if (this.entry) { this.entry = { ...this.entry, patientName: (ev.target as HTMLInputElement).value }; }
+              if (this.showErrors) this.validate();
             }}
           >
             <md-icon slot="leading-icon">person</md-icon>
           </md-filled-text-field>
 
           <md-filled-text-field
-            label="Rodné číslo / ID pacienta"
+            label="Rodné číslo"
             required
-            pattern=".*\S.*"
+            placeholder="900101/1234"
             value={this.entry?.patientId}
+            error={!!this.err('patientId')}
+            error-text={this.err('patientId') || ''}
+            supporting-text="Formát: 900101/1234 alebo 9001011234"
             oninput={(ev: InputEvent) => {
-              if (this.entry) this.entry.patientId = this.handleInputEvent(ev);
+              if (this.entry) { this.entry = { ...this.entry, patientId: (ev.target as HTMLInputElement).value }; }
+              if (this.showErrors) this.validate();
             }}
           >
             <md-icon slot="leading-icon">fingerprint</md-icon>
@@ -186,10 +184,13 @@ export class TjmkMedbedReservationEditor {
           <md-filled-text-field
             label="Dôvod hospitalizácie / vyšetrenia"
             required
-            pattern=".*\S.*"
+            placeholder="Napr. plánovaná operácia kolena"
             value={this.entry?.reason}
+            error={!!this.err('reason')}
+            error-text={this.err('reason') || ''}
             oninput={(ev: InputEvent) => {
-              if (this.entry) this.entry.reason = this.handleInputEvent(ev);
+              if (this.entry) { this.entry = { ...this.entry, reason: (ev.target as HTMLInputElement).value }; }
+              if (this.showErrors) this.validate();
             }}
           >
             <md-icon slot="leading-icon">medical_services</md-icon>
@@ -200,11 +201,11 @@ export class TjmkMedbedReservationEditor {
             type="datetime-local"
             required
             value={this.formatDateForInput(this.entry?.from)}
+            error={!!this.err('from')}
+            error-text={this.err('from') || ''}
             oninput={(ev: InputEvent) => {
-              if (this.entry) {
-                const val = this.handleInputEvent(ev);
-                this.entry.from = new Date(val);
-              }
+              if (this.entry) { this.entry = { ...this.entry, from: new Date((ev.target as HTMLInputElement).value) }; }
+              if (this.showErrors) this.validate();
             }}
           >
             <md-icon slot="leading-icon">calendar_today</md-icon>
@@ -215,11 +216,11 @@ export class TjmkMedbedReservationEditor {
             type="datetime-local"
             required
             value={this.formatDateForInput(this.entry?.to)}
+            error={!!this.err('to')}
+            error-text={this.err('to') || ''}
             oninput={(ev: InputEvent) => {
-              if (this.entry) {
-                const val = this.handleInputEvent(ev);
-                this.entry.to = new Date(val);
-              }
+              if (this.entry) { this.entry = { ...this.entry, to: new Date((ev.target as HTMLInputElement).value) }; }
+              if (this.showErrors) this.validate();
             }}
           >
             <md-icon slot="leading-icon">calendar_month</md-icon>
@@ -227,9 +228,11 @@ export class TjmkMedbedReservationEditor {
 
           <md-filled-text-field
             label="Kontakt (tel. / email)"
+            placeholder="+421 900 123 456"
             value={this.entry?.contactInfo}
+            supporting-text="Voliteľné"
             oninput={(ev: InputEvent) => {
-              if (this.entry) this.entry.contactInfo = this.handleInputEvent(ev);
+              if (this.entry) { this.entry = { ...this.entry, contactInfo: (ev.target as HTMLInputElement).value }; }
             }}
           >
             <md-icon slot="leading-icon">phone</md-icon>
@@ -238,9 +241,9 @@ export class TjmkMedbedReservationEditor {
           {!isNew && (
             <md-filled-select
               label="Stav objednávky"
-              value={this.entry?.status}
               oninput={(ev: InputEvent) => {
-                if (this.entry) this.entry.status = this.handleInputEvent(ev) as any;
+                if (this.entry) { this.entry = { ...this.entry, status: (ev.target as HTMLInputElement).value as any }; }
+                if (this.showErrors) this.validate();
               }}
             >
               <md-icon slot="leading-icon">flag</md-icon>
@@ -259,9 +262,13 @@ export class TjmkMedbedReservationEditor {
           {this.entry?.status === 'cancelled' && (
             <md-filled-text-field
               label="Dôvod zrušenia"
+              required
               value={this.entry?.cancelReason}
+              error={!!this.err('cancelReason')}
+              error-text={this.err('cancelReason') || ''}
               oninput={(ev: InputEvent) => {
-                if (this.entry) this.entry.cancelReason = this.handleInputEvent(ev);
+                if (this.entry) { this.entry = { ...this.entry, cancelReason: (ev.target as HTMLInputElement).value }; }
+                if (this.showErrors) this.validate();
               }}
             >
               <md-icon slot="leading-icon">info</md-icon>
@@ -272,31 +279,26 @@ export class TjmkMedbedReservationEditor {
             <md-filled-text-field
               label="Poznámka nemocnice"
               value={this.entry?.note}
+              supporting-text="Voliteľné"
               oninput={(ev: InputEvent) => {
-                if (this.entry) this.entry.note = this.handleInputEvent(ev);
+                if (this.entry) { this.entry = { ...this.entry, note: (ev.target as HTMLInputElement).value }; }
               }}
             >
               <md-icon slot="leading-icon">note</md-icon>
             </md-filled-text-field>
           )}
-        </form>
+        </div>
 
         <md-divider inset />
 
         <div class="actions">
-          <md-filled-tonal-button
-            id="delete"
-            disabled={isNew}
-            onClick={() => this.deleteEntry()}
-          >
+          <md-filled-tonal-button disabled={isNew} onClick={() => this.deleteEntry()}>
             <md-icon slot="icon">delete</md-icon>
             Zrušiť objednávku
           </md-filled-tonal-button>
           <span class="stretch-fill" />
-          <md-outlined-button id="cancel" onClick={() => this.editorClosed.emit('cancel')}>
-            Späť
-          </md-outlined-button>
-          <md-filled-button id="confirm" onClick={() => this.saveEntry()}>
+          <md-outlined-button onClick={() => this.editorClosed.emit('cancel')}>Späť</md-outlined-button>
+          <md-filled-button onClick={() => this.saveEntry()}>
             <md-icon slot="icon">save</md-icon>
             Uložiť
           </md-filled-button>
