@@ -96,6 +96,7 @@ export class TjmkMedbedApp {
           <div class="app-header">
             <md-icon class="app-icon">bed</md-icon>
             <span class="app-title">MedBed</span>
+            <span class="app-department">{this.departmentId}</span>
           </div>
           <md-tabs
             class="app-tabs"

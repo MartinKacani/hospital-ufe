@@ -30,6 +30,13 @@
   letter-spacing: 0.05em;
 }
 
+.app-department {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  margin-left: 0.5rem;
+  font-weight: 400;
+}
+
 .app-tabs {
   width: 100%;
   border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
