@@ -33,4 +33,9 @@
 .app-tabs {
   width: 100%;
   border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+  overflow: visible;
+}
+
+md-primary-tab {
+  overflow: visible;
 }
