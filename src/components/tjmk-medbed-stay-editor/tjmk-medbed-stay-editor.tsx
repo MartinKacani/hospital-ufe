@@ -32,7 +32,7 @@ export class TjmkMedbedStayEditor {
       const results = await Promise.all(
         depts.map(dId => api.getReservations({ departmentId: dId }).catch(() => [] as Reservation[]))
       );
-      this.reservations = results.flat().filter(r => r.status !== 'cancelled');
+      this.reservations = results.flat().filter(r => r.status === 'pending');
     } catch { /* non-critical */ }
   }
 
